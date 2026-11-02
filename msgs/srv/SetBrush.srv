@@ -1,0 +1,5 @@
+# Load stored gravity parameters for the brush now on the magnetic mount.
+string brush_id
+---
+bool success
+string message

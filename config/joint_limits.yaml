@@ -1,0 +1,10 @@
+# Arm joint limits. Units: rad, rad/s, Nm for revolute; m, m/s, N for arm_joint3 (prismatic).
+# position: raw URDF. velocity / effort: estimates until Damiao motor models are confirmed.
+arm_joint1: { lower: -3.14, upper: 3.14, velocity: 3.0, effort: 10.0 }
+arm_joint2: { lower: -3.14, upper: 3.14, velocity: 3.0, effort: 10.0 }
+arm_joint3: { lower: -0.34, upper: 0.38, velocity: 0.2, effort: 200.0 }
+arm_joint4: { lower: -3.14, upper: 3.14, velocity: 3.0, effort: 5.0 }
+arm_joint5: { lower: -3.33, upper: 0.33, velocity: 3.0, effort: 10.0 }
+arm_joint6: { lower: -1.58, upper: 1.58, velocity: 3.0, effort: 5.0 }
+
+wheel: { velocity: 10.0, effort: 5.0 }   # rad/s (old sim ctrlrange), Nm est

@@ -1,0 +1,14 @@
+ft_calibration:
+  ros__parameters:
+    brushes_yaml: ""                 # empty: <share>/wbc/brushes.yaml
+    raw_wrench_topic: /ft_sensor_broadcaster/wrench
+    imu_topic: /imu_sensor_broadcaster/imu
+    reference_topic: /wbc_controller/reference
+    status_topic: /wbc_controller/status
+    set_brush_service: /wbc_controller/set_brush
+    odom_frame: odom
+    ft_frame: ft_sensor
+    pitch_span_deg: 120.0            # spread of calibration poses
+    settle_error_m: 0.002
+    settle_time_s: 1.0
+    sample_window_s: 0.5

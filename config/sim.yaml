@@ -1,0 +1,18 @@
+# Read by T1SimSystem through <param> tags or the controller manager parameters.
+physics:
+  timestep: 0.001          # s, must match the MJCF <option timestep>
+  viewer: true
+
+ft_noise:
+  bias_force: [0.8, -0.5, 1.2]       # N, sensor frame
+  bias_torque: [0.02, -0.01, 0.005]  # Nm
+  force_noise_std: 0.05              # N
+  torque_noise_std: 0.002            # Nm
+  bias_drift_per_s: 0.0              # N/s
+
+imu_noise:
+  gyro_noise_std: 0.002    # rad/s
+  gyro_bias_std: 0.001     # rad/s
+  accel_noise_std: 0.02    # m/s^2
+
+seed: 42

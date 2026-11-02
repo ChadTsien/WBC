@@ -1,0 +1,16 @@
+# Differential drive chassis. Values marked "est" are estimates until measured on the robot.
+wheel_radius: 0.0655        # m
+wheel_separation: 0.406     # m, raw URDF; old sim README says 0.402 -> measure
+chassis_to_axle_z: 0.093    # m, raw URDF: wheel centers are 0.093 below jisehn origin
+axle_y_in_chassis: 0.1495   # m, raw URDF: drive axle position along jisehn +Y (forward)
+
+caster_radius: 0.025        # m, est
+# m, base_link frame. Raw caster joint origins are not at the wheels; these are
+# joint origin + link CoM offset from the raw URDF -> measure.
+casters:
+  front_left:  [0.050, 0.101]
+  front_right: [0.050, -0.100]
+  rear_left:   [-0.315, 0.160]
+  rear_right:  [-0.315, -0.160]
+
+chassis_mass: 50.0          # kg, raw URDF value looks hand-entered -> weigh

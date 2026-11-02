@@ -1,0 +1,14 @@
+# Copy to /etc/apt/preferences.d/wbc (setup_deps.sh does this).
+# Keeps apt from upgrading the pinned robotpkg packages.
+
+Package: robotpkg-pinocchio
+Pin: version 2.7.0
+Pin-Priority: 1001
+
+Package: robotpkg-hpp-fcl
+Pin: version 2.4.4
+Pin-Priority: 1001
+
+Package: robotpkg-proxsuite
+Pin: version 0.7.3r1
+Pin-Priority: 1001

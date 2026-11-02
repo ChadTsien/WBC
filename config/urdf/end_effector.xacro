@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- tool_link -> ft_sensor (measurement frame) -> brush_mount (magnetic face) -> brush_tip.
+       brush_tip z axis points out of the brush face; the WBC ignores roll about it. -->
+  <xacro:macro name="end_effector" params="cfg">
+
+    <!-- TODO(M0): ft_sensor_joint, brush_mount_joint, brush_tip_joint (all fixed). -->
+
+  </xacro:macro>
+
+</robot>

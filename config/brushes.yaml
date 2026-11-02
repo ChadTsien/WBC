@@ -1,0 +1,7 @@
+# Written by BrushRegistry after calibration. Units: kg, m (ft_sensor frame), N, Nm.
+brushes:
+  default:
+    mass: 0.12
+    com: [0.0, 0.0, 0.05]
+    bias_force: [0.0, 0.0, 0.0]
+    bias_torque: [0.0, 0.0, 0.0]

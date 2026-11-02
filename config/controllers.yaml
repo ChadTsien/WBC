@@ -1,0 +1,34 @@
+controller_manager:
+  ros__parameters:
+    update_rate: 500
+
+    joint_state_broadcaster:
+      type: joint_state_broadcaster/JointStateBroadcaster
+    imu_sensor_broadcaster:
+      type: imu_sensor_broadcaster/IMUSensorBroadcaster
+    ft_sensor_broadcaster:
+      type: force_torque_sensor_broadcaster/ForceTorqueSensorBroadcaster
+    wbc_controller:
+      type: T1::wbc::WbcRosController
+
+imu_sensor_broadcaster:
+  ros__parameters:
+    sensor_name: imu
+    frame_id: imu_link
+
+ft_sensor_broadcaster:
+  ros__parameters:
+    sensor_name: ft_sensor
+    frame_id: ft_sensor
+
+wbc_controller:
+  ros__parameters:
+    arm_joints: [arm_joint1, arm_joint2, arm_joint3, arm_joint4, arm_joint5, arm_joint6]
+    wheel_joints: [wheel_left_joint, wheel_right_joint]
+    imu_name: imu
+    ft_name: ft_sensor
+    config_file: ""                      # empty: <share>/wbc/wbc.yaml
+    robot_description_node: robot_state_publisher
+    odom_frame: odom
+    base_frame: base_link
+    status_rate_hz: 100.0

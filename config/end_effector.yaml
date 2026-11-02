@@ -1,0 +1,11 @@
+# Chain: tool_link -> ft_sensor -> brush_mount -> brush_tip. All estimates until hardware arrives.
+ft_sensor:
+  offset_xyz: [0.0, 0.0, 0.0]      # m, in tool_link
+  offset_rpy: [0.0, 0.0, 0.0]      # rad
+  thickness: 0.03                  # m, sensor body along its z
+  mass: 0.15                       # kg, part above the measurement plane
+
+brush:
+  radius: 0.04                     # m, round brush, symmetric about its axis
+  length: 0.06                     # m, mount face to brush face
+  mass: 0.12                       # kg

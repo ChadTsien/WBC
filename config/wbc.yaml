@@ -1,0 +1,89 @@
+# Loaded by load_wbc_config(). Arm vectors are in arm_joint1..6 order.
+# Units: m, rad, s, N, Nm, kg. Values are starting points for tuning in simulation.
+control_rate_hz: 500.0
+max_inequality_rows: 64
+
+ee_task:
+  kp: [5.0, 5.0, 5.0, 5.0, 5.0]
+  weight: [1000.0, 1000.0, 1000.0, 300.0, 300.0]
+  max_error_rate: 0.5
+
+posture_task:
+  q_nominal: [0.0, 1.0, 0.0, 0.0, -1.5, 0.0]   # placeholder until the model is cleaned up
+  weight: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+  kp: 1.0
+
+base_task:
+  regularization: 10.0
+  track_weight: 10000.0
+  kp_position: 1.0
+  kp_yaw: 1.5
+
+limits:
+  q_min: [-3.14, -3.14, -0.34, -3.14, -3.33, -1.58]
+  q_max: [3.14, 3.14, 0.38, 3.14, 0.33, 1.58]
+  dq_max: [2.0, 2.0, 0.15, 3.0, 3.0, 3.0]
+  ddq_max: [10.0, 10.0, 1.0, 15.0, 15.0, 15.0]
+  v_max: 0.5
+  omega_max: 1.0
+  dv_max: 0.5
+  domega_max: 1.5
+  position_margin: 0.05
+  position_gain: 5.0
+
+qp:
+  max_iterations: 100
+  eps_abs: 1.0e-6
+  warm_start: true
+
+command:
+  free_motion:
+    kp: [30.0, 30.0, 2000.0, 10.0, 20.0, 10.0]
+    kd: [1.0, 1.0, 50.0, 0.3, 0.6, 0.3]
+  contact:
+    kp: [20.0, 20.0, 2000.0, 5.0, 10.0, 5.0]
+    kd: [1.0, 1.0, 50.0, 0.3, 0.6, 0.3]
+  max_tracking_error: 0.1
+
+contact:
+  approach_speed: 0.02
+  force_ramp_rate: 10.0
+  retract_speed: 0.05
+  released_force: 0.5
+  max_force: 40.0
+
+admittance:
+  mass: 2.0
+  damping: 200.0
+  stiffness: 0.0
+  max_offset: 0.05
+  max_velocity: 0.05
+  tilt_damping: 5.0
+  max_tilt: 0.2
+
+diff_drive:
+  wheel_radius: 0.0655
+  wheel_separation: 0.406
+
+ekf:
+  q_v: 0.5
+  q_omega: 1.0
+  r_v: 1.0e-4
+  r_omega_odom: 1.0e-2
+  r_omega_gyro: 4.0e-6
+  gate_chi2: 9.0
+base_R_imu_rpy: [0.0, 0.0, 0.0]
+
+ft:
+  cutoff_hz: 30.0
+  inertia_enabled: false
+  tare_samples: 250
+
+contact_detector:
+  contact_on_force: 2.0
+  contact_off_force: 1.0
+  detach_tolerance: 0.3
+  detach_hold_time: 0.1
+
+brushes_yaml: ""          # empty: <share>/wbc/brushes.yaml
+default_brush: default

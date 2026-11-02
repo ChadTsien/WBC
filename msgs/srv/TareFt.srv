@@ -1,0 +1,4 @@
+# Re-estimate F/T bias only. Caller guarantees the brush is in free air and the arm is still.
+---
+bool success
+string message

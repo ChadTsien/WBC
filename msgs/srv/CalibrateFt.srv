@@ -1,0 +1,8 @@
+# Identify mass, CoM and bias of the tool below the F/T sensor, then save under brush_id.
+string brush_id
+uint32 num_poses
+---
+bool success
+string message
+float64 residual_rms_force       # N
+float64 residual_rms_torque      # Nm

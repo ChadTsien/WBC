@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- base_link: REP-103, +X forward, on the ground under the drive-wheel axle midpoint.
+       chassis_link: raw "jisehn" frame (+Y forward in the CAD export). -->
+  <xacro:macro name="chassis" params="cfg">
+
+    <link name="base_link"/>
+
+    <!-- TODO(M0): origin from base_link to chassis_link (yaw -pi/2, lift to axle height). -->
+    <joint name="chassis_joint" type="fixed">
+      <parent link="base_link"/>
+      <child link="chassis_link"/>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+    </joint>
+
+    <!-- TODO(M0): inertial from raw jisehn; collision from meshes/collision. -->
+    <link name="chassis_link">
+      <visual>
+        <geometry>
+          <mesh filename="package://wbc/meshes/raw/jisehn.STL"/>
+        </geometry>
+      </visual>
+    </link>
+
+    <!-- TODO(M0): wheel_left_joint / wheel_right_joint, type continuous, from raw "zuo" / "y". -->
+    <!-- TODO(M0): four casters as fixed sphere links at measured positions. -->
+    <!-- TODO(M0): imu_link (fixed) and laser_link (fixed) at their mounting positions. -->
+
+  </xacro:macro>
+
+</robot>

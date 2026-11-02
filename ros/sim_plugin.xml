@@ -1,0 +1,6 @@
+<library path="sim_system">
+  <class name="T1::sim::SimSystem" type="T1::sim::SimSystem"
+         base_class_type="hardware_interface::SystemInterface">
+    <description>MuJoCo simulation of the base, arm, IMU and F/T sensor.</description>
+  </class>
+</library>

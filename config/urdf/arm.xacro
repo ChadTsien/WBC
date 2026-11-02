@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- Arm from raw joints "0".."6" renamed per NAME_MAPPING.md.
+       Kinematic origins and inertials copy the raw URDF; limits come from joint_limits.yaml. -->
+  <xacro:macro name="arm" params="limits">
+
+    <!-- TODO(M0): arm_mount_joint (fixed, chassis_link -> arm_base_link), raw joint "0". -->
+    <!-- TODO(M0): arm_joint1 .. arm_joint6 and links arm_link1 .. arm_link6. -->
+    <!-- TODO(M0): tool_joint (fixed, arm_link6 -> tool_link), raw joint "tool". -->
+
+  </xacro:macro>
+
+</robot>

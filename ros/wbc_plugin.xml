@@ -1,0 +1,6 @@
+<library path="wbc_controller">
+  <class name="T1::wbc::WbcRosController" type="T1::wbc::WbcRosController"
+         base_class_type="controller_interface::ControllerInterface">
+    <description>Whole-body controller: estimation, F/T compensation, admittance, QP.</description>
+  </class>
+</library>

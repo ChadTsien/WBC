@@ -1,0 +1,15 @@
+/build/
+/install/
+/build-aarch64/
+/install-aarch64/
+/log/
+/sysroot/
+/tools/deploy.env
+/compile_commands.json
+__pycache__/
+*.pyc
+*.user
+.cache/
+.DS_Store
+*.mcap
+/bags/
