@@ -128,7 +128,7 @@
 
 | 脚本 | 作用 |
 |---|---|
-| `scripts/setup_deps.sh` | x86 一键安装与锁版本（需要 sudo） |
+| `scripts/setup_deps.sh` | x86 一键安装与锁版本（不要整份 sudo；脚本内部会对 apt 提权） |
 | `scripts/setup_deps_jetson.sh` | Jetson 一键安装，Pinocchio/hpp-fcl/ProxSuite 源码编译 |
 | `scripts/env.sh` | 每个终端 source：ROS → `/opt/openrobots` → MuJoCo → 工作空间 |
 | `scripts/check_env.sh` | 只读自检 |

@@ -5,6 +5,10 @@
 #   ./scripts/setup_deps.sh
 #   source scripts/env.sh
 #   ./scripts/check_env.sh
+#
+# Do not wrap the whole script in sudo. apt uses sudo internally; MuJoCo and
+# pip --user must land in the calling user's home. sudo ./scripts/setup_deps.sh
+# is tolerated and installs those files for $SUDO_USER.
 
 set -euo pipefail
 
@@ -14,6 +18,16 @@ ROOT_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
 source "${SCRIPT_DIR}/versions.sh"
 
 die() { echo "ERROR: $*" >&2; exit 1; }
+
+t1_resolve_dev_user || exit 1
+if [[ "$(id -u)" -eq 0 ]]; then
+  echo "==> Invoked with sudo; user files go to ${T1_DEV_USER} (${T1_DEV_HOME})"
+  run_root() { "$@"; }
+  as_dev() { sudo -u "${T1_DEV_USER}" -H -- "$@"; }
+else
+  run_root() { sudo "$@"; }
+  as_dev() { "$@"; }
+fi
 
 [[ "$(uname -m)" == "x86_64" ]] || die "x86_64 only. On Jetson use scripts/setup_deps_jetson.sh"
 command -v apt-get >/dev/null || die "Need apt (Ubuntu)."
@@ -25,16 +39,16 @@ source /etc/os-release
 
 echo "==> robotpkg apt source"
 if [[ ! -f /etc/apt/keyrings/robotpkg.asc ]]; then
-  sudo mkdir -p /etc/apt/keyrings
+  run_root mkdir -p /etc/apt/keyrings
   curl -fsSL http://robotpkg.openrobots.org/packages/debian/robotpkg.asc \
-    | sudo tee /etc/apt/keyrings/robotpkg.asc >/dev/null
+    | run_root tee /etc/apt/keyrings/robotpkg.asc >/dev/null
 fi
 if [[ ! -f /etc/apt/sources.list.d/robotpkg.list ]]; then
   echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/robotpkg.asc] http://robotpkg.openrobots.org/packages/debian/pub ${T1_UBUNTU_CODENAME} robotpkg" \
-    | sudo tee /etc/apt/sources.list.d/robotpkg.list >/dev/null
+    | run_root tee /etc/apt/sources.list.d/robotpkg.list >/dev/null
 fi
-sudo cp "${SCRIPT_DIR}/apt-preferences" /etc/apt/preferences.d/wbc
-sudo apt-get update
+run_root cp "${SCRIPT_DIR}/apt-preferences" /etc/apt/preferences.d/wbc
+run_root apt-get update
 
 # Do not grep -q a pipeline under pipefail: grep exits at the first hit,
 # apt-cache then dies with SIGPIPE, and the version looks missing.
@@ -48,7 +62,7 @@ has_exact_version robotpkg-hpp-fcl "${T1_HPP_FCL_VER}" || die "robotpkg-hpp-fcl 
 has_exact_version robotpkg-proxsuite "${T1_PROXSUITE_APT_VER}" || die "robotpkg-proxsuite ${T1_PROXSUITE_APT_VER} missing"
 
 echo "==> Toolchain, libraries, pinned robotpkg packages"
-sudo apt-get install -y \
+run_root apt-get install -y \
   build-essential cmake pkg-config curl rsync ca-certificates \
   python3-pip python3-colcon-common-extensions \
   libeigen3-dev libyaml-cpp-dev libgtest-dev libglfw3-dev \
@@ -58,27 +72,27 @@ sudo apt-get install -y \
   "robotpkg-pinocchio=${T1_PINOCCHIO_VER}" \
   "robotpkg-hpp-fcl=${T1_HPP_FCL_VER}" \
   "robotpkg-proxsuite=${T1_PROXSUITE_APT_VER}"
-sudo apt-mark hold robotpkg-pinocchio robotpkg-hpp-fcl robotpkg-proxsuite
+run_root apt-mark hold robotpkg-pinocchio robotpkg-hpp-fcl robotpkg-proxsuite
 
 echo "==> ROS 2 packages"
 R="ros-${T1_ROS_DISTRO}"
-sudo apt-get install -y \
+run_root apt-get install -y \
   "${R}-ros2-control" "${R}-ros2-controllers" "${R}-realtime-tools" \
   "${R}-xacro" "${R}-robot-state-publisher" "${R}-joint-state-publisher-gui" \
   "${R}-rviz2" "${R}-tf2-eigen" "${R}-foxglove-bridge" "${R}-rosbag2-storage-mcap"
 
-echo "==> MuJoCo ${T1_MUJOCO_VER} (C library)"
+echo "==> MuJoCo ${T1_MUJOCO_VER} (C library) -> ${T1_MUJOCO_DIR}"
 if [[ ! -d "${T1_MUJOCO_DIR}" ]]; then
-  mkdir -p "$(dirname "${T1_MUJOCO_DIR}")"
+  as_dev mkdir -p "$(dirname "${T1_MUJOCO_DIR}")"
   url="https://github.com/google-deepmind/mujoco/releases/download/${T1_MUJOCO_VER}/mujoco-${T1_MUJOCO_VER}-linux-x86_64.tar.gz"
-  curl -fL "${url}" | tar -xz -C "$(dirname "${T1_MUJOCO_DIR}")"
+  curl -fL "${url}" | as_dev tar -xz -C "$(dirname "${T1_MUJOCO_DIR}")"
 fi
 
-echo "==> Python packages"
-pip3 install --user -r "${ROOT_DIR}/requirements.txt"
+echo "==> Python packages (${T1_DEV_USER})"
+as_dev pip3 install --user -r "${ROOT_DIR}/requirements.txt"
 # rerun-sdk 0.35 声明 numpy>=2。仿真钉死 numpy 1.26.4，所以不让它改 numpy。
-pip3 install --user 'attrs>=23.1' 'pillow>=8' 'pyarrow>=18' 'psutil>=7' 'typing-extensions>=4.5'
-pip3 install --user --no-deps "rerun-sdk==${T1_RERUN_VER}"
+as_dev pip3 install --user 'attrs>=23.1' 'pillow>=8' 'pyarrow>=18' 'psutil>=7' 'typing-extensions>=4.5'
+as_dev pip3 install --user --no-deps "rerun-sdk==${T1_RERUN_VER}"
 
 echo
 echo "Done. Next:"

@@ -3,25 +3,27 @@
 #include <atomic>
 #include <thread>
 
-namespace T1::sim {
+namespace T1::sim
+{
 
-class MujocoWorld;
+    class MujocoWorld;
 
-// Optional GLFW window that renders the world at ~60 Hz in its own thread.
-// Copies mjData under MujocoWorld's internal mutex (friend access); never steps physics.
-class SimViewer {
- public:
-  explicit SimViewer(const MujocoWorld& world);
-  ~SimViewer();
-  void start();
-  void stop();
+    // Optional GLFW window that renders the world at ~60 Hz in its own thread.
+    // Copies mjData under MujocoWorld's internal mutex (friend access); never steps physics.
+    class SimViewer
+    {
+        public:
+        explicit SimViewer(const MujocoWorld& world);
+        ~SimViewer();
+        void start();
+        void stop();
 
- private:
-  void run();
+        private:
+        void run();
 
-  const MujocoWorld& world_;
-  std::thread thread_;
-  std::atomic<bool> running_{false};
-};
+        const MujocoWorld& world_;
+        std::thread thread_;
+        std::atomic<bool> running_{false};
+    };
 
 }  // namespace T1::sim

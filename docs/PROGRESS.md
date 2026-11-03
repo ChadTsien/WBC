@@ -9,9 +9,9 @@
 | # | 文件 | 状态 | 日期 |
 |---|---|---|---|
 | 1 | `types/types.hpp` | 框架 | 2026-11-02 |
-| 2 | `runtime/math` | 未开始 | |
-| 3 | `runtime/yaml_params` | 未开始 | |
-| 4 | `runtime/filters` | 未开始 | |
+| 2 | `runtime/math` | 完成 | 2026-11-03 |
+| 3 | `runtime/yaml_params` | 完成 | 2026-11-03 |
+| 4 | `runtime/filters` | 进行中 | |
 | 5 | `runtime/rate_limiter` | 未开始 | |
 | 6 | `runtime/spsc_queue.hpp` | 未开始 | |
 | 7 | `config/urdf/chassis.xacro` | 未开始 | |
@@ -93,7 +93,7 @@
 
 | 事项 | 状态 | 日期 |
 |---|---|---|
-| `sudo ./scripts/setup_deps.sh`，`check_env.sh` 全过 | 未开始 | |
+| `./scripts/setup_deps.sh`，`check_env.sh` 全过 | 未开始 | |
 | `git init` 并首次提交 | 未开始 | |
 | Jetson：`setup_deps_jetson.sh` | 未开始 | |
 | 交叉编译：`sync_sysroot.sh` + `deploy.sh` 跑通 | 未开始 | |

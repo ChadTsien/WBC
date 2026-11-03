@@ -1,30 +1,50 @@
 #include "runtime/math.hpp"
 
-namespace T1 {
+#include <cmath>
 
-double wrap_angle(double angle) {
-  // TODO(M0)
-  return angle;
-}
+namespace T1
+{
 
-Mat3 skew(const Vec3& /*v*/) {
-  // TODO(M0)
-  return Mat3::Zero();
-}
+    double wrap_angle(double angle)
+    {
+        const double a = std::atan2(std::sin(angle), std::cos(angle));
+        if (a <= -kPi)
+        {
+            return kPi;
+        }
+        return a;
+    }
 
-Vec3 so3_log(const Mat3& /*rotation*/) {
-  // TODO(M0)
-  return Vec3::Zero();
-}
+    Mat3 skew(const Vec3& v)
+    {
+        Mat3 m;
+        m << 0.0, -v.z(), v.y(), v.z(), 0.0, -v.x(), -v.y(), v.x(), 0.0;
+        return m;
+    }
 
-double yaw_of(const Mat3& /*rotation*/) {
-  // TODO(M0)
-  return 0.0;
-}
+    Vec3 so3_log(const Mat3& rotation)
+    {
+        const Eigen::AngleAxisd aa(rotation);
+        if (aa.angle() < 1e-12)
+        {
+            return Vec3::Zero();    // 轴方向无定义
+        }
+        return aa.angle() * aa.axis();
+    }
 
-VecX saturate_norm(const VecX& v, double /*max_norm*/) {
-  // TODO(M0)
-  return v;
-}
+    double yaw_of(const Mat3& rotation)
+    {
+        return std::atan2(rotation(1, 0), rotation(0, 0));
+    }
+
+    VecX saturate_norm(const VecX& v, double max_norm)
+    {
+        const double n = v.norm();
+        if (n <= max_norm)
+        {
+            return v;
+        }
+        return v * (max_norm / n);
+    }
 
 }  // namespace T1

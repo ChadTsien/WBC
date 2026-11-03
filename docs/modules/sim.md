@@ -8,7 +8,7 @@ MuJoCo 仿真，以 ros2_control 硬件插件的形式接入。控制器看到�
 - `core/`：只依赖 MuJoCo 和 t1_common，不依赖 ROS。
 - `ros/`：`T1SimSystem` 插件。
 
-**启用 MuJoCo**：开始写 `mujoco_world.cpp` 时，取消 `CMakeLists.txt` 中 `include(T1MuJoCo)` 和 `target_link_libraries(... T1::mujoco)` 的注释（需要先 `sudo ./scripts/setup_deps.sh` 装好 MuJoCo 3.9.0 C 库）。
+**启用 MuJoCo**：开始写 `mujoco_world.cpp` 时，取消 `CMakeLists.txt` 中 `include(T1MuJoCo)` 和 `target_link_libraries(... T1::mujoco)` 的注释（需要先 `./scripts/setup_deps.sh` 装好 MuJoCo 3.9.0 C 库）。
 
 **时间关系**：controller_manager 每 2 ms 调用一次 `read → update → write`；`read()` 中推进 `period / timestep` 步物理（默认 2 步），每一步都按最新指令重新计算 MIT 力矩。仿真时间因此与控制周期绑定。
 

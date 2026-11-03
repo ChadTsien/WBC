@@ -7,7 +7,7 @@ C++ 命名空间是 `T1`。文件名、目录名、ROS 包名都不加 `t1`。RO
 ## 上手
 
 ```bash
-./scripts/setup_deps.sh
+./scripts/setup_deps.sh                # 不要加 sudo；脚本内部会对 apt 提权
 source scripts/env.sh
 ./scripts/check_env.sh
 colcon build --packages-select wbc
