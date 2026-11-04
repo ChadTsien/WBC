@@ -1,16 +1,21 @@
-# Differential drive chassis. Values marked "est" are estimates until measured on the robot.
-wheel_radius: 0.0655        # m
-wheel_separation: 0.406     # m, raw URDF; old sim README says 0.402 -> measure
-chassis_to_axle_z: 0.093    # m, raw URDF: wheel centers are 0.093 below jisehn origin
-axle_y_in_chassis: 0.1495   # m, raw URDF: drive axle position along jisehn +Y (forward)
+# Differential drive chassis. Values marked "est" are estimates until measured.
+# chassis_link in v6_wbc.urdf is already REP-103 (+X forward, +Y left).
+wheel_radius: 0.0655          # m, est
+wheel_separation: 0.4055      # m, 2 * 0.20275 from v6_wbc.urdf
+wheel_width: 0.05             # m, est, collision cylinder length
+axle_x_in_chassis: 0.16       # m, drive-axle midpoint along chassis_link +X
+axle_z_in_chassis: 0.0237     # m, wheel centre z in chassis_link
 
-caster_radius: 0.025        # m, est
-# m, base_link frame. Raw caster joint origins are not at the wheels; these are
-# joint origin + link CoM offset from the raw URDF -> measure.
+caster_radius: 0.025          # m, est
+# m, base_link frame. No casters in the CAD export; xy from the old URDF -> measure.
 casters:
   front_left:  [0.050, 0.101]
   front_right: [0.050, -0.100]
   rear_left:   [-0.315, 0.160]
   rear_right:  [-0.315, -0.160]
 
-chassis_mass: 50.0          # kg, raw URDF value looks hand-entered -> weigh
+# est mounting poses in base_link; identity rotation so base_R_imu is I.
+imu_xyz: [0.0, 0.0, 0.20]
+laser_xyz: [0.10, 0.0, 0.25]
+
+chassis_mass: 50.0            # kg, CAD value looks hand-entered -> weigh

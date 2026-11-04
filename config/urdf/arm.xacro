@@ -1,13 +1,161 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
-  <!-- Arm from raw joints "0".."6" renamed per NAME_MAPPING.md.
-       Kinematic origins and inertials copy the raw URDF; limits come from joint_limits.yaml. -->
+  <!-- Kinematic origins and inertials copy v6_wbc.urdf; CAD names both the joint
+       and the child link arm_jointN / arm_mount_joint / tool_joint. Links are
+       renamed to arm_linkN / arm_base_link / tool_link. Limits from yaml. -->
+
+  <xacro:macro name="cad_mesh" params="file">
+    <visual>
+      <geometry>
+        <mesh filename="package://wbc/meshes/raw/${file}"/>
+      </geometry>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="package://wbc/meshes/raw/${file}"/>
+      </geometry>
+    </collision>
+  </xacro:macro>
+
   <xacro:macro name="arm" params="limits">
 
-    <!-- TODO(M0): arm_mount_joint (fixed, chassis_link -> arm_base_link), raw joint "0". -->
-    <!-- TODO(M0): arm_joint1 .. arm_joint6 and links arm_link1 .. arm_link6. -->
-    <!-- TODO(M0): tool_joint (fixed, arm_link6 -> tool_link), raw joint "tool". -->
+    <joint name="arm_mount_joint" type="fixed">
+      <parent link="chassis_link"/>
+      <child link="arm_base_link"/>
+      <origin xyz="0.153 0 0.88765" rpy="0 0 0.037072"/>
+    </joint>
+    <link name="arm_base_link">
+      <inertial>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <mass value="0.5"/>
+        <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6"/>
+      </inertial>
+      <xacro:cad_mesh file="arm_mount_joint.STL"/>
+    </link>
+
+    <joint name="arm_joint1" type="revolute">
+      <parent link="arm_base_link"/>
+      <child link="arm_link1"/>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <axis xyz="0 0 1"/>
+      <limit lower="${limits['arm_joint1']['lower']}" upper="${limits['arm_joint1']['upper']}"
+             velocity="${limits['arm_joint1']['velocity']}" effort="${limits['arm_joint1']['effort']}"/>
+    </joint>
+    <link name="arm_link1">
+      <inertial>
+        <origin xyz="0.060036 0.0013498 -0.03342" rpy="0 0 0"/>
+        <mass value="1.5"/>
+        <inertia ixx="0.00055903" ixy="-0.0001017" ixz="-0.00019926"
+                 iyy="0.0044725" iyz="-3.3406E-06" izz="0.0046668"/>
+      </inertial>
+      <xacro:cad_mesh file="arm_joint1.STL"/>
+    </link>
+
+    <joint name="arm_joint2" type="revolute">
+      <parent link="arm_link1"/>
+      <child link="arm_link2"/>
+      <origin xyz="0.22 0 0.13296" rpy="0 0 -0.10404"/>
+      <axis xyz="0 0 -1"/>
+      <limit lower="${limits['arm_joint2']['lower']}" upper="${limits['arm_joint2']['upper']}"
+             velocity="${limits['arm_joint2']['velocity']}" effort="${limits['arm_joint2']['effort']}"/>
+    </joint>
+    <link name="arm_link2">
+      <inertial>
+        <origin xyz="0.13648 0.0063874 -0.067802" rpy="0 0 0"/>
+        <mass value="1.5"/>
+        <inertia ixx="0.0016395" ixy="-5.7716E-05" ixz="-0.00094019"
+                 iyy="0.015626" iyz="3.5816E-06" izz="0.014853"/>
+      </inertial>
+      <xacro:cad_mesh file="arm_joint2.STL"/>
+    </link>
+
+    <joint name="arm_joint3" type="prismatic">
+      <parent link="arm_link2"/>
+      <child link="arm_link3"/>
+      <origin xyz="0.32549 -0.00010767 -0.5001" rpy="0 0 0"/>
+      <axis xyz="0 0 1"/>
+      <limit lower="${limits['arm_joint3']['lower']}" upper="${limits['arm_joint3']['upper']}"
+             velocity="${limits['arm_joint3']['velocity']}" effort="${limits['arm_joint3']['effort']}"/>
+    </joint>
+    <link name="arm_link3">
+      <inertial>
+        <origin xyz="0.0021928 0.0049691 0.3388" rpy="0 0 0"/>
+        <mass value="1"/>
+        <inertia ixx="0.021701" ixy="-1.3756E-05" ixz="3.5708E-08"
+                 iyy="0.021662" iyz="-3.1676E-08" izz="0.0002373"/>
+      </inertial>
+      <xacro:cad_mesh file="arm_joint3.STL"/>
+    </link>
+
+    <joint name="arm_joint4" type="revolute">
+      <parent link="arm_link3"/>
+      <child link="arm_link4"/>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <axis xyz="0 0 1"/>
+      <limit lower="${limits['arm_joint4']['lower']}" upper="${limits['arm_joint4']['upper']}"
+             velocity="${limits['arm_joint4']['velocity']}" effort="${limits['arm_joint4']['effort']}"/>
+    </joint>
+    <link name="arm_link4">
+      <inertial>
+        <origin xyz="-0.02654 0.0071633 -0.022123" rpy="0 0 0"/>
+        <mass value="0.5"/>
+        <inertia ixx="1.4366E-05" ixy="-1.2671E-07" ixz="-3.6545E-06"
+                 iyy="1.2739E-05" iyz="2.8268E-07" izz="1.0192E-05"/>
+      </inertial>
+      <xacro:cad_mesh file="arm_joint4.STL"/>
+    </link>
+
+    <joint name="arm_joint5" type="revolute">
+      <parent link="arm_link4"/>
+      <child link="arm_link5"/>
+      <origin xyz="-0.031613 0.002352 -0.04255" rpy="${-pi/2} 0 -1.6451"/>
+      <axis xyz="0 0 1"/>
+      <limit lower="${limits['arm_joint5']['lower']}" upper="${limits['arm_joint5']['upper']}"
+             velocity="${limits['arm_joint5']['velocity']}" effort="${limits['arm_joint5']['effort']}"/>
+    </joint>
+    <link name="arm_link5">
+      <inertial>
+        <origin xyz="-0.0020117 0.054321 0.043414" rpy="0 0 0"/>
+        <mass value="1"/>
+        <inertia ixx="0.00065389" ixy="-5.5292E-05" ixz="3.9225E-06"
+                 iyy="0.0002255" iyz="3.4951E-05" izz="0.00060496"/>
+      </inertial>
+      <xacro:cad_mesh file="arm_joint5.STL"/>
+    </link>
+
+    <joint name="arm_joint6" type="revolute">
+      <parent link="arm_link5"/>
+      <child link="arm_link6"/>
+      <origin xyz="-3.816E-05 0.16018 -0.0020483" rpy="0 0 0"/>
+      <axis xyz="0 0 1"/>
+      <limit lower="${limits['arm_joint6']['lower']}" upper="${limits['arm_joint6']['upper']}"
+             velocity="${limits['arm_joint6']['velocity']}" effort="${limits['arm_joint6']['effort']}"/>
+    </joint>
+    <link name="arm_link6">
+      <inertial>
+        <origin xyz="0.0142 0.021215 0.037235" rpy="0 0 0"/>
+        <mass value="1.5"/>
+        <inertia ixx="3.7651E-05" ixy="-2.0522E-07" ixz="5.0276E-07"
+                 iyy="5.7051E-05" iyz="-4.6836E-07" izz="2.7137E-05"/>
+      </inertial>
+      <xacro:cad_mesh file="arm_joint6.STL"/>
+    </link>
+
+    <joint name="tool_joint" type="fixed">
+      <parent link="arm_link6"/>
+      <child link="tool_link"/>
+      <origin xyz="0 0.058533 0.037919" rpy="${-pi/2} 0 0"/>
+    </joint>
+    <link name="tool_link">
+      <inertial>
+        <origin xyz="0.014441 0.0010081 -0.013685" rpy="0 0 0"/>
+        <mass value="0.01"/>
+        <inertia ixx="2.8165E-06" ixy="0" ixz="0"
+                 iyy="2.8165E-06" iyz="0" izz="3.2797E-06"/>
+      </inertial>
+      <xacro:cad_mesh file="tool_joint.STL"/>
+    </link>
 
   </xacro:macro>
 

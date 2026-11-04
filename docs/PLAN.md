@@ -19,14 +19,14 @@
 
 | 项目 | 规格 |
 |---|---|
-| 底盘 | 前驱差速，2 个驱动轮 + 4 个万向轮；轮径 0.0655 m；轮距 0.406 m（URDF 值，待实测） |
+| 底盘 | 前驱差速，2 个驱动轮 + 4 个万向轮；轮径 0.0655 m；轮距 0.4055 m（`v6_wbc.urdf`，待实测） |
 | 机械臂 | 6 关节：J1、J2 平面二连杆（绕 z）；J3 丝杠 z 向平移；J4 绕 z；J5、J6 竖直平面俯仰二连杆 |
 | 电机 | 达妙，MIT 模式：`τ = kp(q_des − q) + kd(dq_des − dq) + τ_ff` |
 | 末端 | 六维力传感器 + 圆形刷头（不旋转、无电机、轴对称），磁吸装卸 |
 | 传感器 | 激光雷达、IMU、深度相机、轮速编码器、六维力传感器 |
 | 计算 | Jetson Orin Nano（JetPack 6 / Ubuntu 22.04）；开发机 x86_64 |
 | 通信 | 达妙官方 USB-CAN |
-| 模型 | `washcar-simulator/v6_description/urdf/6-8-1.urdf`（原样存于 `config/urdf/raw/`） |
+| 模型 | SolidWorks `v6_wbc.urdf`（`config/urdf/raw/`）；旧档 `6-8-1.urdf` 只留对照 |
 
 **由构型得出的结论**
 

@@ -1,31 +1,151 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
-  <!-- base_link: REP-103, +X forward, on the ground under the drive-wheel axle midpoint.
-       chassis_link: raw "jisehn" frame (+Y forward in the CAD export). -->
+  <!-- base_link: REP-103, +X forward, on the ground under the drive-axle midpoint.
+       chassis_link: v6_wbc CAD, already +X forward. -->
+
+  <xacro:macro name="caster_ball" params="name x y radius">
+    <joint name="caster_${name}_joint" type="fixed">
+      <parent link="base_link"/>
+      <child link="caster_${name}"/>
+      <origin xyz="${x} ${y} ${radius}" rpy="0 0 0"/>
+    </joint>
+    <link name="caster_${name}">
+      <visual>
+        <geometry>
+          <sphere radius="${radius}"/>
+        </geometry>
+      </visual>
+      <collision>
+        <geometry>
+          <sphere radius="${radius}"/>
+        </geometry>
+      </collision>
+      <inertial>
+        <mass value="0.16"/>
+        <inertia ixx="4e-5" ixy="0" ixz="0" iyy="4e-5" iyz="0" izz="4e-5"/>
+      </inertial>
+    </link>
+  </xacro:macro>
+
   <xacro:macro name="chassis" params="cfg">
 
     <link name="base_link"/>
 
-    <!-- TODO(M0): origin from base_link to chassis_link (yaw -pi/2, lift to axle height). -->
     <joint name="chassis_joint" type="fixed">
       <parent link="base_link"/>
       <child link="chassis_link"/>
-      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <origin
+        xyz="${-cfg['axle_x_in_chassis']} 0 ${cfg['wheel_radius'] - cfg['axle_z_in_chassis']}"
+        rpy="0 0 0"/>
     </joint>
 
-    <!-- TODO(M0): inertial from raw jisehn; collision from meshes/collision. -->
     <link name="chassis_link">
+      <inertial>
+        <origin xyz="0.0064536 0.005602 0.4715" rpy="0 0 0"/>
+        <mass value="${cfg['chassis_mass']}"/>
+        <inertia ixx="0.3906" ixy="-0.011384" ixz="0.0049803"
+                 iyy="0.38788" iyz="0.0046922" izz="0.21531"/>
+      </inertial>
       <visual>
         <geometry>
-          <mesh filename="package://wbc/meshes/raw/jisehn.STL"/>
+          <mesh filename="package://wbc/meshes/raw/chassis_link.STL"/>
         </geometry>
       </visual>
+      <collision>
+        <origin xyz="0 0 0.25" rpy="0 0 0"/>
+        <geometry>
+          <box size="0.55 0.42 0.50"/>
+        </geometry>
+      </collision>
     </link>
 
-    <!-- TODO(M0): wheel_left_joint / wheel_right_joint, type continuous, from raw "zuo" / "y". -->
-    <!-- TODO(M0): four casters as fixed sphere links at measured positions. -->
-    <!-- TODO(M0): imu_link (fixed) and laser_link (fixed) at their mounting positions. -->
+    <!-- CAD joint axis is child +Z; rpy maps that to chassis -Y, so 0 0 -1 makes
+         positive rotation drive +X (forward). -->
+    <joint name="wheel_left_joint" type="continuous">
+      <parent link="chassis_link"/>
+      <child link="wheel_left_link"/>
+      <origin
+        xyz="${cfg['axle_x_in_chassis']} ${cfg['wheel_separation']/2} ${cfg['axle_z_in_chassis']}"
+        rpy="${pi/2} ${-pi/2} 0"/>
+      <axis xyz="0 0 -1"/>
+    </joint>
+    <link name="wheel_left_link">
+      <inertial>
+        <origin xyz="-2.5956E-08 1.4735E-07 -0.031758" rpy="0 0 0"/>
+        <mass value="5"/>
+        <inertia ixx="0.00047265" ixy="1.2993E-09" ixz="3.411E-11"
+                 iyy="0.00047265" iyz="6.0582E-12" izz="0.00085288"/>
+      </inertial>
+      <visual>
+        <geometry>
+          <mesh filename="package://wbc/meshes/raw/wheel_left_link.STL"/>
+        </geometry>
+      </visual>
+      <collision>
+        <geometry>
+          <cylinder radius="${cfg['wheel_radius']}" length="${cfg['wheel_width']}"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <joint name="wheel_right_joint" type="continuous">
+      <parent link="chassis_link"/>
+      <child link="wheel_right_link"/>
+      <origin
+        xyz="${cfg['axle_x_in_chassis']} ${-cfg['wheel_separation']/2} ${cfg['axle_z_in_chassis']}"
+        rpy="${pi/2} ${-pi/2} 0"/>
+      <axis xyz="0 0 -1"/>
+    </joint>
+    <link name="wheel_right_link">
+      <inertial>
+        <origin xyz="2.4542E-08 1.2337E-08 0.032242" rpy="0 0 0"/>
+        <mass value="5"/>
+        <inertia ixx="0.00047265" ixy="-2.8495E-09" ixz="-2.2362E-11"
+                 iyy="0.00047265" iyz="-2.6387E-11" izz="0.00085288"/>
+      </inertial>
+      <visual>
+        <geometry>
+          <mesh filename="package://wbc/meshes/raw/wheel_right_link.STL"/>
+        </geometry>
+      </visual>
+      <collision>
+        <geometry>
+          <cylinder radius="${cfg['wheel_radius']}" length="${cfg['wheel_width']}"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <xacro:caster_ball name="front_left"
+      x="${cfg['casters']['front_left'][0]}" y="${cfg['casters']['front_left'][1]}"
+      radius="${cfg['caster_radius']}"/>
+    <xacro:caster_ball name="front_right"
+      x="${cfg['casters']['front_right'][0]}" y="${cfg['casters']['front_right'][1]}"
+      radius="${cfg['caster_radius']}"/>
+    <xacro:caster_ball name="rear_left"
+      x="${cfg['casters']['rear_left'][0]}" y="${cfg['casters']['rear_left'][1]}"
+      radius="${cfg['caster_radius']}"/>
+    <xacro:caster_ball name="rear_right"
+      x="${cfg['casters']['rear_right'][0]}" y="${cfg['casters']['rear_right'][1]}"
+      radius="${cfg['caster_radius']}"/>
+
+    <joint name="imu_joint" type="fixed">
+      <parent link="base_link"/>
+      <child link="imu_link"/>
+      <origin
+        xyz="${cfg['imu_xyz'][0]} ${cfg['imu_xyz'][1]} ${cfg['imu_xyz'][2]}"
+        rpy="0 0 0"/>
+    </joint>
+    <link name="imu_link"/>
+
+    <joint name="laser_joint" type="fixed">
+      <parent link="base_link"/>
+      <child link="laser_link"/>
+      <origin
+        xyz="${cfg['laser_xyz'][0]} ${cfg['laser_xyz'][1]} ${cfg['laser_xyz'][2]}"
+        rpy="0 0 0"/>
+    </joint>
+    <link name="laser_link"/>
 
   </xacro:macro>
 

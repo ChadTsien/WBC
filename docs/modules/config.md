@@ -3,7 +3,7 @@
 > 目录已按 horkin-core 重排成仓库根下的同名目录，不再使用 `src/t1_*` 包。文中若还出现旧路径，以 README 的目录表和 `docs/PROGRESS.md` 为准。
 
 
-机器人模型的唯一来源。原始导出文件只读留档，所有整理在 xacro 里完成；MJCF 由脚本从 URDF 生成，两边永远一致。名称对照见 `src/t1_description/NAME_MAPPING.md`。
+机器人模型的唯一来源。原始导出文件只读留档，所有整理在 xacro 里完成；MJCF 由脚本从 URDF 生成，两边永远一致。名称对照见 `config/NAME_MAPPING.md`。
 
 ## 整理清单（M0，全部在 xacro / yaml 中完成）
 
@@ -13,16 +13,16 @@
 | 2 | 驱动轮是被限位 0 焊死的 revolute | `chassis.xacro`：改为 `continuous` |
 | 3 | 万向轮只有一个水平轴，关节原点不在轮心 | `chassis.xacro`：删关节，改为固定小球连杆，位置读 `chassis.yaml` |
 | 4 | 轮距 0.406（URDF）与 0.402（旧仿真）不一致 | `chassis.yaml`，实测后修改 |
-| 5 | 车头朝 +Y，根坐标系离地约 0.16 m | `chassis.xacro`：新增 `base_link`（REP-103），`chassis_joint` 绕 z 转 −90° 并抬到轴高 |
-| 6 | 关节/连杆名为数字，网格路径混用两个包名 | 所有 xacro 用新名字；网格统一为 `package://t1_description/meshes/raw/` |
+| 5 | 车头朝 +Y，根坐标系离地约 0.16 m | 已由 `v6_wbc.urdf` 解决：`chassis_link` 为 +X 朝前；`chassis_joint` 只平移 |
+| 6 | 关节/连杆名为数字，网格路径混用两个包名 | 所有 xacro 用新名字；网格统一为 `package://wbc/meshes/raw/` |
 | 7 | 缺少力传感器、刷头 | `end_effector.xacro`：`ft_sensor`、`brush_mount`、`brush_tip` |
 
 另外两件事：碰撞体用简化几何体（放在 `meshes/collision/`，或直接用 box/cylinder/capsule），显示仍用原始网格；车身质量 50 kg 是整数，待称重。
 
 ---
 
-### urdf/raw/6-8-1.urdf · meshes/raw/*.STL
-- **职责**：原始 SolidWorks 导出，**只读**。拿到新 CAD 时整体替换这两个目录，再检查 xacro 是否需要跟着改。
+### urdf/raw/v6_wbc.urdf · meshes/raw/*.STL
+- **职责**：当前 SolidWorks 导出，**只读**。旧档 `6-8-1.urdf` 仍留在 `urdf/raw/`。拿到新 CAD 时替换 `v6_wbc.urdf` 和对应 STL，再检查 xacro。
 
 ### urdf/t1.urdf.xacro
 - **职责**：主文件。读入三个 yaml，组装 chassis / arm / end_effector，按 `use_ros2_control` 决定是否加 `<ros2_control>`。
@@ -32,10 +32,10 @@
 ### urdf/chassis.xacro
 - **职责**：`base_link`、`chassis_joint`、`chassis_link`、两个驱动轮、四个万向轮小球、`imu_link`、`laser_link`。
 - **实现要点**
-  - `chassis_joint`：`rpy="0 0 -π/2"`，z 方向抬高 `chassis_to_axle_z + wheel_radius`；x/y 方向的平移，使 `base_link` 原点落在驱动轮轴线中点正下方。
-  - 驱动轮：轴线是车体的左右方向；正转方向要保证"轮子正转 = 车往前走"（左右轮的 axis 符号可能相反）。
-  - 惯量照抄原始 URDF 的 `jisehn`、`zuo`、`you`。
-- **验收**：`ros2 launch t1_description view.launch.py` 中，车头沿 RViz 的红轴（+X），轮子贴地（z = 0）。
+  - `chassis_joint`：CAD 已是 +X 朝前，`rpy="0 0 0"`；平移 `xyz=(-axle_x, 0, wheel_radius − axle_z)`，使 `base_link` 原点在驱动轴中点地面投影。
+  - 驱动轮：`continuous`；CAD 的 child +Z 经 rpy 后沿底盘 −Y，`axis="0 0 -1"` 使正转 = 车往前。
+  - 惯量照抄 `v6_wbc.urdf` 的 `chassis_link` / `wheel_*_link`。
+- **验收**：`ros2 launch wbc view.launch.py` 中，车头沿 RViz 的红轴（+X），轮子贴地（z = 0）。
 - **里程碑** M0
 
 ### urdf/arm.xacro

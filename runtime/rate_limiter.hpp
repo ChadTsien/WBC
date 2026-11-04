@@ -3,7 +3,18 @@
 namespace T1
 {
 
-    // Moves the output toward a target with bounded rate of change (units per second).
+    /**
+     * 按最大变化率逼近目标
+     *
+     * 递推（update），r = max_rate，单位 1/s
+     * - r ≤ 0：不限速，y ← target
+     * - 否则：Δ = clamp(target − y, −r·dt, +r·dt)，y ← y + Δ
+     *
+     * 说明
+     * - dt 单位 s，须 > 0
+     * - 一步走不完就停在目标上，不会越过
+     * - 导纳 / 接触阶段的期望力斜坡用这个
+     */
     class RateLimiter
     {
         public:

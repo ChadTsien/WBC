@@ -1,11 +1,81 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
-  <!-- tool_link -> ft_sensor (measurement frame) -> brush_mount (magnetic face) -> brush_tip.
-       brush_tip z axis points out of the brush face; the WBC ignores roll about it. -->
-  <xacro:macro name="end_effector" params="cfg">
+  <!-- tool_link -> ft_sensor (measurement frame) -> brush_mount -> brush_tip.
+       brush_tip +Z points out of the brush face. Masses and sizes from end_effector.yaml. -->
 
-    <!-- TODO(M0): ft_sensor_joint, brush_mount_joint, brush_tip_joint (all fixed). -->
+  <xacro:macro name="end_effector" params="cfg">
+    <xacro:property name="ft_m" value="${cfg['ft_sensor']['mass']}"/>
+    <xacro:property name="ft_h" value="${cfg['ft_sensor']['thickness']}"/>
+    <xacro:property name="ft_r" value="0.02"/>
+    <xacro:property name="br_m" value="${cfg['brush']['mass']}"/>
+    <xacro:property name="br_r" value="${cfg['brush']['radius']}"/>
+    <xacro:property name="br_h" value="${cfg['brush']['length']}"/>
+
+    <joint name="ft_sensor_joint" type="fixed">
+      <parent link="tool_link"/>
+      <child link="ft_sensor"/>
+      <origin
+        xyz="${cfg['ft_sensor']['offset_xyz'][0]} ${cfg['ft_sensor']['offset_xyz'][1]} ${cfg['ft_sensor']['offset_xyz'][2]}"
+        rpy="${cfg['ft_sensor']['offset_rpy'][0]} ${cfg['ft_sensor']['offset_rpy'][1]} ${cfg['ft_sensor']['offset_rpy'][2]}"/>
+    </joint>
+    <link name="ft_sensor">
+      <inertial>
+        <origin xyz="0 0 ${ft_h/2}" rpy="0 0 0"/>
+        <mass value="${ft_m}"/>
+        <inertia
+          ixx="${ft_m * (3*ft_r*ft_r + ft_h*ft_h) / 12}" ixy="0" ixz="0"
+          iyy="${ft_m * (3*ft_r*ft_r + ft_h*ft_h) / 12}" iyz="0"
+          izz="${0.5 * ft_m * ft_r * ft_r}"/>
+      </inertial>
+      <visual>
+        <origin xyz="0 0 ${ft_h/2}" rpy="0 0 0"/>
+        <geometry>
+          <cylinder radius="${ft_r}" length="${ft_h}"/>
+        </geometry>
+      </visual>
+      <collision>
+        <origin xyz="0 0 ${ft_h/2}" rpy="0 0 0"/>
+        <geometry>
+          <cylinder radius="${ft_r}" length="${ft_h}"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <joint name="brush_mount_joint" type="fixed">
+      <parent link="ft_sensor"/>
+      <child link="brush_mount"/>
+      <origin xyz="0 0 ${ft_h}" rpy="0 0 0"/>
+    </joint>
+    <link name="brush_mount">
+      <inertial>
+        <origin xyz="0 0 ${br_h/2}" rpy="0 0 0"/>
+        <mass value="${br_m}"/>
+        <inertia
+          ixx="${br_m * (3*br_r*br_r + br_h*br_h) / 12}" ixy="0" ixz="0"
+          iyy="${br_m * (3*br_r*br_r + br_h*br_h) / 12}" iyz="0"
+          izz="${0.5 * br_m * br_r * br_r}"/>
+      </inertial>
+      <visual>
+        <origin xyz="0 0 ${br_h/2}" rpy="0 0 0"/>
+        <geometry>
+          <cylinder radius="${br_r}" length="${br_h}"/>
+        </geometry>
+      </visual>
+      <collision>
+        <origin xyz="0 0 ${br_h/2}" rpy="0 0 0"/>
+        <geometry>
+          <cylinder radius="${br_r}" length="${br_h}"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <joint name="brush_tip_joint" type="fixed">
+      <parent link="brush_mount"/>
+      <child link="brush_tip"/>
+      <origin xyz="0 0 ${br_h}" rpy="0 0 0"/>
+    </joint>
+    <link name="brush_tip"/>
 
   </xacro:macro>
 

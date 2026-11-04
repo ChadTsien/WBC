@@ -1,5 +1,7 @@
 #include "runtime/rate_limiter.hpp"
 
+#include <algorithm>
+
 namespace T1
 {
 
@@ -13,10 +15,16 @@ namespace T1
         value_ = value;
     }
 
-    double RateLimiter::update(double target, double /*dt*/)
+    double RateLimiter::update(double target, double dt)
     {
-        // TODO(M0)
-        value_ = target;
+        if (max_rate_ <= 0.0)
+        {
+            value_ = target;
+            return value_;
+        }
+        const double max_step = max_rate_ * dt;
+        const double delta = std::clamp(target - value_, -max_step, max_step);
+        value_ += delta;
         return value_;
     }
 

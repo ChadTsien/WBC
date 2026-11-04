@@ -11,12 +11,12 @@
 | 1 | `types/types.hpp` | 框架 | 2026-11-02 |
 | 2 | `runtime/math` | 完成 | 2026-11-03 |
 | 3 | `runtime/yaml_params` | 完成 | 2026-11-03 |
-| 4 | `runtime/filters` | 进行中 | |
-| 5 | `runtime/rate_limiter` | 未开始 | |
-| 6 | `runtime/spsc_queue.hpp` | 未开始 | |
-| 7 | `config/urdf/chassis.xacro` | 未开始 | |
-| 8 | `config/urdf/arm.xacro` | 未开始 | |
-| 9 | `config/urdf/end_effector.xacro` | 未开始 | |
+| 4 | `runtime/filters` | 完成 | 2026-11-03 |
+| 5 | `runtime/rate_limiter` | 完成 | 2026-11-04 |
+| 6 | `runtime/spsc_queue.hpp` | 完成 | 2026-11-04 |
+| 7 | `config/urdf/chassis.xacro` | 完成 | 2026-11-04 |
+| 8 | `config/urdf/arm.xacro` | 完成 | 2026-11-04 |
+| 9 | `config/urdf/end_effector.xacro` | 完成 | 2026-11-04 |
 | 10 | `tools/urdf_to_mjcf.py` | 未开始 | |
 | 11 | `model/robot_model` | 未开始 | |
 | 12 | `kine/arm`（位姿、雅可比） | 未开始 | |

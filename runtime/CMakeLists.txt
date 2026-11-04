@@ -25,4 +25,13 @@ if(BUILD_TESTING)
   ament_add_gtest(test_filters test/test_filters.cpp)
   target_link_libraries(test_filters runtime)
   target_defaults(test_filters)
+
+  ament_add_gtest(test_rate_limiter test/test_rate_limiter.cpp)
+  target_link_libraries(test_rate_limiter runtime)
+  target_defaults(test_rate_limiter)
+
+  ament_add_gtest(test_spsc_queue test/test_spsc_queue.cpp)
+  target_link_libraries(test_spsc_queue runtime)
+  target_defaults(test_spsc_queue)
+
 endif()
