@@ -8,7 +8,7 @@
 #include "control/controller.hpp"
 #include "estimation/ekf.hpp"
 #include "estimation/odometry.hpp"
-#include "model/robot_model.hpp"
+#include "model/arm_model.hpp"
 #include "ros/io.hpp"
 #include "signal/compensate.hpp"
 #include "signal/contact.hpp"
@@ -49,7 +49,7 @@ namespace T1::wbc
         std::string ft_name_;
 
         WbcConfig config_;
-        std::unique_ptr<RobotModel> model_;
+        std::unique_ptr<ArmModel> model_;
         std::unique_ptr<WbcController> wbc_;
         std::unique_ptr<est::DiffDriveOdometry> odometry_;
         est::PlanarEkf ekf_;

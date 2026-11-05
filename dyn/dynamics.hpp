@@ -1,16 +1,16 @@
 #pragma once
 
-#include "model/robot_model.hpp"
+#include "model/arm_model.hpp"
 #include "types/types.hpp"
 
 namespace T1
 {
 
-    // Arm dynamics terms used as MIT-mode feed-forward. Writes RobotModel::data.
+    // Arm dynamics terms used as MIT-mode feed-forward. Writes ArmModel::data.
     class Dynamics
     {
         public:
-        explicit Dynamics(RobotModel& model);
+        explicit Dynamics(ArmModel& model);
 
         // Payload below the F/T sensor (brush etc.), merged into the last arm link.
         // com_in_ft: centre of mass in the ft_sensor frame. Call when the brush changes, not in RT.
@@ -20,7 +20,7 @@ namespace T1
         ArmVec gravity_torque(const ArmVec& q, const Vec3& gravity_in_base);
 
         private:
-        RobotModel& model_;
+        ArmModel& model_;
     };
 
 }  // namespace T1

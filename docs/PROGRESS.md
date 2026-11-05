@@ -17,10 +17,10 @@
 | 7 | `config/urdf/chassis.xacro` | 完成 | 2026-11-04 |
 | 8 | `config/urdf/arm.xacro` | 完成 | 2026-11-04 |
 | 9 | `config/urdf/end_effector.xacro` | 完成 | 2026-11-04 |
-| 10 | `tools/urdf_to_mjcf.py` | 未开始 | |
-| 11 | `model/robot_model` | 未开始 | |
+| 10 | `tools/urdf_to_mjcf.py` | 完成 | 2026-11-05 |
+| 11 | `model/arm_model` | 进行中 | 2026-11-05 |
 | 12 | `kine/arm`（位姿、雅可比） | 未开始 | |
-| 13 | `kine/base`（互转） | 未开始 | |
+| 13 | `model/chassis_model`（互转） | 未开始 | |
 | 14 | `sim/world` | 未开始 | |
 | 15 | `sim/sensors`（IMU） | 未开始 | |
 | 16 | `sim/viewer` | 未开始 | |
@@ -34,7 +34,7 @@
 |---|---|---|---|
 | 18 | `runtime/rt_thread` | 未开始 | |
 | 19 | `runtime/loop_timer` | 未开始 | |
-| 20 | `kine/base`（point_jacobian） | 未开始 | |
+| 20 | `model/chassis_model`（point_jacobian） | 未开始 | |
 | 21 | `kine/arm`（manipulability） | 未开始 | |
 | 22 | `kine/whole_body` | 未开始 | |
 | 23 | `control/qp_problem` | 未开始 | |

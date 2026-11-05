@@ -3,7 +3,7 @@
 namespace T1::est
 {
 
-    DiffDriveOdometry::DiffDriveOdometry(const BaseKinematics& kinematics) : kinematics_(kinematics)
+    DiffDriveOdometry::DiffDriveOdometry(const ChassisModel& chassis) : chassis_(chassis)
     {
     }
 

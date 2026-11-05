@@ -2,7 +2,6 @@
 
 add_library(kine STATIC
   arm.cpp
-  base.cpp
   whole_body.cpp
 )
 target_link_libraries(kine PUBLIC model)

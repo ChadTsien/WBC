@@ -135,7 +135,7 @@
   6. `qp_.reset()`，依次加入末端、姿态、底盘任务，`limits_.apply`。
   7. `solver_.solve`；失败时 x = 0（保持不动），并记录状态。
   8. `dynamics_.gravity_torque(q, gravity_in_base)`。
-  9. `command_.build(...)`，`base_kinematics_.to_wheels(...)`；更新 `x_prev_`，填写 Output。
+  9. `command_.build(...)`，`chassis_.to_wheels(...)`；更新 `x_prev_`，填写 Output。
 - **验收（M1 闭环运动学测试）**：写一个不依赖 ROS 的测试：用"理想执行"（q += dq·dt，底盘按差速模型积分）闭环 10 s，参考为匀速移动的刷头目标，刷头误差 < 5 mm；目标走到机械臂够不着的地方时底盘自动跟随。
 - **里程碑** M1（M3b 加接触）　**行数预算** ≤ 150
 
@@ -161,7 +161,7 @@
     - 命令：每个关节 5 个接口，然后每个轮子 1 个；
     - 状态：每个关节位置、速度、力矩，每个轮子位置、速度，IMU 10 个，力传感器 6 个。
     - 下标辅助函数依赖这个顺序。
-  - `on_configure`：`load_wbc_config`，`fetch_robot_description` 后构造 `RobotModel`，接着构造 WBC、里程计、EKF、力补偿和 io。所有分配都在这里完成。
+  - `on_configure`：`load_wbc_config`，`fetch_robot_description` 后构造 `ArmModel`，接着构造 WBC、里程计、EKF、力补偿和 io。所有分配都在这里完成。
   - `on_activate`：读当前状态，`odometry_->reset`，`ekf_.reset`，`wbc_->reset`；`hold_reference_` 设为当前刷头位姿。
   - `update`：
     1. 处理换刷头（`set_tool_payload` 和补偿器参数）和标零请求；

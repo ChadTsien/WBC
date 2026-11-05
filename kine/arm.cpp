@@ -3,7 +3,7 @@
 namespace T1
 {
 
-    ArmKinematics::ArmKinematics(RobotModel& model) : model_(model) {}
+    ArmKinematics::ArmKinematics(ArmModel& model) : model_(model) {}
 
     void ArmKinematics::update(const ArmVec& /*q*/)
     {
@@ -24,6 +24,11 @@ namespace T1
     Iso3 ArmKinematics::ft_pose() const
     {
         return frame_pose(model_.ft_frame_id());
+    }
+
+    Iso3 ArmKinematics::tool_pose_in_mount() const
+    {
+        return frame_pose(model_.mount_frame_id()).inverse() * tool_pose();
     }
 
     ArmJacobian ArmKinematics::frame_jacobian(int /*frame_id*/) const

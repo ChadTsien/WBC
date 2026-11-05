@@ -3,7 +3,7 @@
 #include <cstdint>
 #include <vector>
 
-#include "kine/base.hpp"
+#include "model/chassis_model.hpp"
 #include "types/types.hpp"
 
 namespace T1::wbc

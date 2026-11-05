@@ -8,15 +8,18 @@
   <xacro:property name="chassis_cfg" value="${xacro.load_yaml(pkg + '/chassis.yaml')}"/>
   <xacro:property name="limits_cfg" value="${xacro.load_yaml(pkg + '/joint_limits.yaml')}"/>
   <xacro:property name="ee_cfg" value="${xacro.load_yaml(pkg + '/end_effector.yaml')}"/>
+  <xacro:property name="cam_cfg" value="${xacro.load_yaml(pkg + '/cameras.yaml')}"/>
 
   <xacro:include filename="chassis.xacro"/>
   <xacro:include filename="arm.xacro"/>
   <xacro:include filename="end_effector.xacro"/>
+  <xacro:include filename="cameras.xacro"/>
   <xacro:include filename="ros2_control.xacro"/>
 
   <xacro:chassis cfg="${chassis_cfg}"/>
   <xacro:arm limits="${limits_cfg}"/>
   <xacro:end_effector cfg="${ee_cfg}"/>
+  <xacro:cameras cfg="${cam_cfg}"/>
 
   <xacro:if value="$(arg use_ros2_control)">
     <xacro:ros2_control use_sim="$(arg use_sim)"/>

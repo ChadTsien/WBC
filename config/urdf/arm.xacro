@@ -3,7 +3,8 @@
 
   <!-- Kinematic origins and inertials copy v6_wbc.urdf; CAD names both the joint
        and the child link arm_jointN / arm_mount_joint / tool_joint. Links are
-       renamed to arm_linkN / arm_base_link / tool_link. Limits from yaml. -->
+       renamed to arm_linkN / arm_base_link / tool_link. Limits from yaml.
+       J4 CAD rpy yaw is 1.5807; use pi/2 (the 0.57 deg leftover is assembly dust). -->
 
   <xacro:macro name="cad_mesh" params="file">
     <visual>
@@ -23,7 +24,7 @@
     <joint name="arm_mount_joint" type="fixed">
       <parent link="chassis_link"/>
       <child link="arm_base_link"/>
-      <origin xyz="0.153 0 0.88765" rpy="0 0 0.037072"/>
+      <origin xyz="0.153 0 0.88765" rpy="0 0 0"/>
     </joint>
     <link name="arm_base_link">
       <inertial>
@@ -55,7 +56,7 @@
     <joint name="arm_joint2" type="revolute">
       <parent link="arm_link1"/>
       <child link="arm_link2"/>
-      <origin xyz="0.22 0 0.13296" rpy="0 0 -0.10404"/>
+      <origin xyz="0.22 0 0.13296" rpy="0 0 0"/>
       <axis xyz="0 0 -1"/>
       <limit lower="${limits['arm_joint2']['lower']}" upper="${limits['arm_joint2']['upper']}"
              velocity="${limits['arm_joint2']['velocity']}" effort="${limits['arm_joint2']['effort']}"/>
@@ -91,7 +92,7 @@
     <joint name="arm_joint4" type="revolute">
       <parent link="arm_link3"/>
       <child link="arm_link4"/>
-      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <origin xyz="0 0 0" rpy="0 0 ${pi/2}"/>
       <axis xyz="0 0 1"/>
       <limit lower="${limits['arm_joint4']['lower']}" upper="${limits['arm_joint4']['upper']}"
              velocity="${limits['arm_joint4']['velocity']}" effort="${limits['arm_joint4']['effort']}"/>
@@ -109,7 +110,7 @@
     <joint name="arm_joint5" type="revolute">
       <parent link="arm_link4"/>
       <child link="arm_link5"/>
-      <origin xyz="-0.031613 0.002352 -0.04255" rpy="${-pi/2} 0 -1.6451"/>
+      <origin xyz="-0.031613 0.002352 -0.04255" rpy="${-pi/2} 0 ${-pi/2}"/>
       <axis xyz="0 0 1"/>
       <limit lower="${limits['arm_joint5']['lower']}" upper="${limits['arm_joint5']['upper']}"
              velocity="${limits['arm_joint5']['velocity']}" effort="${limits['arm_joint5']['effort']}"/>

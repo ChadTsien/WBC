@@ -1,0 +1,16 @@
+# RGBD placeholders. Poses are estimates until measured on the robot.
+# chassis_rgbd: pan (yaw) on chassis_link. Not a WBC joint.
+# arm_rgbd: fixed on arm_link5, moves with J5.
+
+chassis_rgbd:
+  xyz: [0.12, 0.0, 0.45]     # m, pan axis origin in chassis_link
+  rpy: [0.0, 0.0, 0.0]       # rad
+  axis: [0.0, 1.0, 0.0]      # yaw about chassis z
+  lower: -0.7854             # rad
+  upper: 1.5707
+  velocity: 2.0              # rad/s, est
+  effort: 1.0                # Nm, est
+
+arm_rgbd:
+  xyz: [0.0, 0.0, 0.0]       # m, in arm_link5
+  rpy: [0.0, 0.0, 0.0]       # rad

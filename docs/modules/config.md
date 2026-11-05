@@ -29,6 +29,10 @@
 - **参数**：`use_sim`（true：`t1_sim/T1SimSystem`；false：`t1_hardware/T1HardwareSystem`）、`use_ros2_control`。
 - **状态**：完成。
 
+### urdf/cameras.xacro · config/cameras.yaml
+- **职责**：机身可偏航 RGBD（`chassis_rgbd_*`）、J5 上固定 RGBD（`arm_rgbd_*`），各带光学系。不进 `ros2_control` / WBC。
+- **里程碑** M0（占位）；安装位实测后改 yaml。
+
 ### urdf/chassis.xacro
 - **职责**：`base_link`、`chassis_joint`、`chassis_link`、两个驱动轮、四个万向轮小球、`imu_link`、`laser_link`。
 - **实现要点**

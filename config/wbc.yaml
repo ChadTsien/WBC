@@ -61,7 +61,7 @@ admittance:
   tilt_damping: 5.0
   max_tilt: 0.2
 
-diff_drive:
+chassis:
   wheel_radius: 0.0655
   wheel_separation: 0.406
 

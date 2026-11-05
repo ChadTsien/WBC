@@ -1,6 +1,6 @@
 #pragma once
 
-#include "model/robot_model.hpp"
+#include "model/arm_model.hpp"
 #include "types/types.hpp"
 
 namespace T1
@@ -8,18 +8,30 @@ namespace T1
 
     using ArmJacobian = Eigen::Matrix<double, 6, kNumArmJoints>;
 
-    // Forward kinematics and Jacobians in base_link. Shares RobotModel::data with Dynamics:
-    // call update() first in each cycle, then read; Dynamics calls overwrite cached results.
+    /**
+     * 机械臂正运动学与雅可比（相对 base_link）
+     *
+     * 说明
+     * - 与 Dynamics 共用 ArmModel::data()
+     * - 每个周期先 update(q)，取走位姿和雅可比，再调用 Dynamics
+     */
     class ArmKinematics
     {
         public:
-        explicit ArmKinematics(RobotModel& model);
+        explicit ArmKinematics(ArmModel& model);
 
         void update(const ArmVec& q);
 
-        Iso3 frame_pose(int frame_id) const;  // in base_link
+        Iso3 frame_pose(int frame_id) const;  // 在 base_link 下
         Iso3 tool_pose() const;
         Iso3 ft_pose() const;
+        /**
+         * 刷头在臂座（arm_base_link / arm_mount_joint）下的位姿
+         *
+         * 说明
+         * - T_mount_tip = T_base_mount⁻¹ · T_base_tip
+         */
+        Iso3 tool_pose_in_mount() const;
 
         // Rows [linear; angular], axes of base_link, reference point at the frame origin.
         ArmJacobian frame_jacobian(int frame_id) const;
@@ -30,7 +42,7 @@ namespace T1
         double manipulability() const;
 
         private:
-        RobotModel& model_;
+        ArmModel& model_;
     };
 
 }  // namespace T1

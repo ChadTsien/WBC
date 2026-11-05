@@ -4,7 +4,7 @@
 #include "control/qp_problem.hpp"
 #include "dyn/dynamics.hpp"
 #include "kine/arm.hpp"
-#include "model/robot_model.hpp"
+#include "model/arm_model.hpp"
 
 namespace T1::wbc
 {
@@ -15,7 +15,7 @@ namespace T1::wbc
     class WbcController
     {
         public:
-        WbcController(const WbcConfig& config, RobotModel& model);
+        WbcController(const WbcConfig& config, ArmModel& model);
 
         // Call on activation: holds the current pose, clears integrators and warm start.
         void reset(const RobotState& state);
@@ -28,7 +28,7 @@ namespace T1::wbc
         WbcConfig config_;
         ArmKinematics kinematics_;
         Dynamics dynamics_;
-        BaseKinematics base_kinematics_;
+        ChassisModel chassis_;
 
         EeTrackingTask ee_task_;
         PostureTask posture_task_;

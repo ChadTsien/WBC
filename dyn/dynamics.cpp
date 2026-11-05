@@ -3,7 +3,7 @@
 namespace T1
 {
 
-    Dynamics::Dynamics(RobotModel& model) : model_(model) {}
+    Dynamics::Dynamics(ArmModel& model) : model_(model) {}
 
     void Dynamics::set_tool_payload(double /*mass*/, const Vec3& /*com_in_ft*/)
     {

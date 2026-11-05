@@ -1,21 +1,21 @@
-# Differential drive chassis. Values marked "est" are estimates until measured.
-# chassis_link in v6_wbc.urdf is already REP-103 (+X forward, +Y left).
-wheel_radius: 0.0655          # m, est
-wheel_separation: 0.4055      # m, 2 * 0.20275 from v6_wbc.urdf
-wheel_width: 0.05             # m, est, collision cylinder length
-axle_x_in_chassis: 0.16       # m, drive-axle midpoint along chassis_link +X
+# 底盘相关参数配置文件
+# 驱动轮
+wheel_radius: 0.0655          # m, 轮半径
+wheel_separation: 0.4055      # m, 轮距, 2 * 0.20275 from v6_wbc.urdf
+wheel_width: 0.05             # m, 轮宽
+axle_x_in_chassis: 0.16       # m, 轴中心偏移
 axle_z_in_chassis: 0.0237     # m, wheel centre z in chassis_link
 
+# 万向轮
 caster_radius: 0.025          # m, est
-# m, base_link frame. No casters in the CAD export; xy from the old URDF -> measure.
 casters:
   front_left:  [0.050, 0.101]
   front_right: [0.050, -0.100]
   rear_left:   [-0.315, 0.160]
   rear_right:  [-0.315, -0.160]
 
-# est mounting poses in base_link; identity rotation so base_R_imu is I.
-imu_xyz: [0.0, 0.0, 0.20]
-laser_xyz: [0.10, 0.0, 0.25]
+# 传感器
+imu_xyz: [0.0, 0.0, 0.20]     # imu
+laser_xyz: [0.10, 0.0, 0.25]  # 雷达
 
-chassis_mass: 50.0            # kg, CAD value looks hand-entered -> weigh
+chassis_mass: 50.0            # kg, 底盘质量

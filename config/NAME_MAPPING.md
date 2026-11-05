@@ -1,6 +1,6 @@
 # 原始 URDF 与 wbc 的名称对照
 
-当前 CAD：`urdf/raw/v6_wbc.urdf`（SolidWorks，2026-11-04，机器人名 `11-4-2`）。
+当前 CAD：`urdf/raw/v6_wbc.urdf`（SolidWorks，2026-11-05，机器人名 `11-4-2`）。零位 rpy 已清装配残差；J4 用 `π/2`（CAD 写 1.5807）。
 旧导出 `urdf/raw/6-8-1.urdf` 只留档，xacro 不再引用。
 
 SolidWorks 把关节和子连杆起同一个名字。xacro 里拆开：关节 `*_joint`，连杆 `*_link`。
@@ -22,6 +22,8 @@ SolidWorks 把关节和子连杆起同一个名字。xacro 里拆开：关节 `*
 | — | — | `chassis_joint` | 新增：base_link → chassis_link |
 | — | — | `ft_sensor_joint` `brush_mount_joint` `brush_tip_joint` | 新增末端链 |
 | — | — | 万向轮关节 | CAD 无万向轮；xacro 用固定小球 |
+| — | revolute | `chassis_rgbd_joint` | 机身 RGBD 偏航；不进 WBC |
+| — | fixed | `arm_rgbd_joint` | RGBD 固连 `arm_link5` |
 
 ## 连杆
 
@@ -34,6 +36,7 @@ SolidWorks 把关节和子连杆起同一个名字。xacro 里拆开：关节 `*
 | `arm_joint1` … `arm_joint6` | `arm_link1` … `arm_link6` | `arm_jointN.STL` |
 | `tool_joint` | `tool_link` | `tool_joint.STL` |
 | — | `caster_*` `imu_link` `laser_link` `ft_sensor` `brush_mount` `brush_tip` | 无 / 简单几何 |
+| — | `chassis_rgbd_link` `chassis_rgbd_optical` `arm_rgbd_link` `arm_rgbd_optical` | 小盒子 / 光学系 |
 
 ## 坐标系
 

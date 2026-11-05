@@ -1,0 +1,159 @@
+<mujoco model="flat">
+  <option timestep="0.001" integrator="implicitfast" />
+  <visual>
+    <headlight ambient="0.4 0.4 0.4" diffuse="0.6 0.6 0.6" />
+  </visual>
+  <asset>
+    <texture name="grid" type="2d" builtin="checker" rgb1="0.25 0.28 0.3" rgb2="0.32 0.35 0.38" width="512" height="512" />
+    <material name="grid" texture="grid" texrepeat="10 10" reflectance="0.05" />
+    <mesh name="chassis_link" content_type="model/stl" file="/home/chad/t1-wbc/config/meshes/raw/chassis_link.STL" />
+    <mesh name="wheel_left_link" content_type="model/stl" file="/home/chad/t1-wbc/config/meshes/raw/wheel_left_link.STL" />
+    <mesh name="wheel_right_link" content_type="model/stl" file="/home/chad/t1-wbc/config/meshes/raw/wheel_right_link.STL" />
+    <mesh name="arm_mount_joint" content_type="model/stl" file="/home/chad/t1-wbc/config/meshes/raw/arm_mount_joint.STL" />
+    <mesh name="arm_joint1" content_type="model/stl" file="/home/chad/t1-wbc/config/meshes/raw/arm_joint1.STL" />
+    <mesh name="arm_joint2" content_type="model/stl" file="/home/chad/t1-wbc/config/meshes/raw/arm_joint2.STL" />
+    <mesh name="arm_joint3" content_type="model/stl" file="/home/chad/t1-wbc/config/meshes/raw/arm_joint3.STL" />
+    <mesh name="arm_joint4" content_type="model/stl" file="/home/chad/t1-wbc/config/meshes/raw/arm_joint4.STL" />
+    <mesh name="arm_joint5" content_type="model/stl" file="/home/chad/t1-wbc/config/meshes/raw/arm_joint5.STL" />
+    <mesh name="arm_joint6" content_type="model/stl" file="/home/chad/t1-wbc/config/meshes/raw/arm_joint6.STL" />
+    <mesh name="tool_joint" content_type="model/stl" file="/home/chad/t1-wbc/config/meshes/raw/tool_joint.STL" />
+  </asset>
+  <worldbody>
+    <light pos="0 0 4" dir="0 0 -1" />
+    <geom name="floor" type="plane" size="20 20 0.1" material="grid" friction="1.0 0.005 0.0001" />
+    <body name="base_link">
+      <freejoint name="base_free" />
+      <body name="chassis_link" pos="-0.16 0 0.0418">
+        <inertial pos="0.0064536 0.005602 0.4715" quat="0.934827 0.0189734 -0.00897312 -0.354483" mass="50" diaginertia="0.400707 0.37806 0.215023" />
+        <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="chassis_link" />
+        <geom size="0.275 0.21 0.25" pos="0 0 0.25" type="box" group="3" />
+        <body name="wheel_left_link" pos="0.16 0.20275 0.0237" quat="0.5 0.5 -0.5 0.5">
+          <inertial pos="-2.5956e-08 1.4735e-07 -0.031758" quat="0.270598 0.653281 -0.270598 0.653281" mass="5" diaginertia="0.00085288 0.000472651 0.000472649" />
+          <joint name="wheel_left_joint" pos="0 0 0" axis="0 0 -1" />
+          <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="wheel_left_link" />
+          <geom size="0.0655 0.025" type="cylinder" group="3" />
+        </body>
+        <body name="wheel_right_link" pos="0.16 -0.20275 0.0237" quat="0.5 0.5 -0.5 0.5">
+          <inertial pos="2.4542e-08 1.2337e-08 0.032242" quat="0.653281 0.270598 -0.653281 0.270598" mass="5" diaginertia="0.00085288 0.000472653 0.000472647" />
+          <joint name="wheel_right_joint" pos="0 0 0" axis="0 0 -1" />
+          <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="wheel_right_link" />
+          <geom size="0.0655 0.025" type="cylinder" group="3" />
+        </body>
+        <body name="arm_base_link" pos="0.153 0 0.88765">
+          <inertial pos="0 0 0" mass="0.5" diaginertia="1e-06 1e-06 1e-06" />
+          <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="arm_mount_joint" />
+          <geom type="mesh" mesh="arm_mount_joint" group="3" />
+          <body name="arm_link1">
+            <inertial pos="0.060036 0.0013498 -0.03342" quat="-0.00609789 0.689709 0.0120838 0.72396" mass="1.5" diaginertia="0.00467646 0.00447512 0.00054675" />
+            <joint name="arm_joint1" pos="0 0 0" axis="0 0 1" range="-3.14 3.14" actuatorfrcrange="-35 35" />
+            <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="arm_joint1" />
+            <geom type="mesh" mesh="arm_joint1" group="3" />
+            <body name="arm_link2" pos="0.22 0 0.13296">
+              <inertial pos="0.13648 0.0063874 -0.067802" quat="0.513557 0.483573 0.480467 0.521122" mass="1.5" diaginertia="0.0156263 0.0149195 0.0015727" />
+              <joint name="arm_joint2" pos="0 0 0" axis="0 0 -1" range="-3.14 3.14" actuatorfrcrange="-35 35" />
+              <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="arm_joint2" />
+              <geom type="mesh" mesh="arm_joint2" group="3" />
+              <body name="arm_link3" pos="0.32549 -0.00010767 -0.5001">
+                <inertial pos="0.0021928 0.0049691 0.3388" quat="0.988228 -1.55405e-07 -1.00384e-06 -0.152988" mass="1" diaginertia="0.0217054 0.0216576 0.0002373" />
+                <joint name="arm_joint3" pos="0 0 0" axis="0 0 1" type="slide" range="-0.34 0.38" actuatorfrcrange="-200 200" />
+                <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="arm_joint3" />
+                <geom type="mesh" mesh="arm_joint3" group="3" />
+                <body name="arm_link4" quat="0.707107 0 0 0.707107">
+                  <inertial pos="-0.02654 0.0071633 -0.022123" quat="0.964883 0.0100259 0.259831 -0.0372715" mass="0.5" diaginertia="1.65043e-05 1.27292e-05 8.06356e-06" />
+                  <joint name="arm_joint4" pos="0 0 0" axis="0 0 1" range="-3.14 3.14" actuatorfrcrange="-12 12" />
+                  <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="arm_joint4" />
+                  <geom type="mesh" mesh="arm_joint4" group="3" />
+                  <body name="arm_link5" pos="-0.031613 0.002352 -0.04255" quat="0.5 -0.5 0.5 -0.5">
+                    <inertial pos="-0.0020117 0.054321 0.043414" quat="0.736499 0.673435 -0.0392866 -0.0501124" mass="1" diaginertia="0.000660916 0.000608129 0.000215305" />
+                    <joint name="arm_joint5" pos="0 0 0" axis="0 0 1" range="-3.33 0.33" actuatorfrcrange="-12 12" />
+                    <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="arm_joint5" />
+                    <geom type="mesh" mesh="arm_joint5" group="3" />
+                    <body name="arm_link6" pos="-3.816e-05 0.16018 -0.0020483">
+                      <inertial pos="0.0142 0.021215 0.037235" quat="0.702863 -0.0222101 -0.0111992 0.71089" mass="1.5" diaginertia="5.70607e-05 3.76723e-05 2.7106e-05" />
+                      <joint name="arm_joint6" pos="0 0 0" axis="0 0 1" range="-1.58 1.58" actuatorfrcrange="-12 12" />
+                      <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="arm_joint6" />
+                      <geom type="mesh" mesh="arm_joint6" group="3" />
+                      <body name="tool_link" pos="0 0.058533 0.037919" quat="0.707107 -0.707107 0 0">
+                        <inertial pos="0.014441 0.0010081 -0.013685" quat="0.5 0.5 -0.5 0.5" mass="0.01" diaginertia="3.2797e-06 2.8165e-06 2.8165e-06" />
+                        <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="tool_joint" />
+                        <geom type="mesh" mesh="tool_joint" group="3" />
+                        <body name="ft_sensor">
+                          <inertial pos="0 0 0.015" quat="0.5 0.5 -0.5 0.5" mass="0.15" diaginertia="3e-05 2.625e-05 2.625e-05" />
+                          <geom size="0.02 0.015" pos="0 0 0.015" type="cylinder" contype="0" conaffinity="0" group="1" density="0" />
+                          <geom size="0.02 0.015" pos="0 0 0.015" type="cylinder" group="3" />
+                          <body name="brush_mount" pos="0 0 0.03">
+                            <inertial pos="0 0 0.03" quat="0.5 0.5 -0.5 0.5" mass="0.12" diaginertia="9.6e-05 8.4e-05 8.4e-05" />
+                            <geom size="0.04 0.03" pos="0 0 0.03" type="cylinder" contype="0" conaffinity="0" group="1" density="0" />
+                            <geom size="0.04 0.03" pos="0 0 0.03" type="cylinder" group="3" />
+                            <body name="brush_tip" pos="0 0 0.06">
+                              <site name="brush_tip" size="0.01" />
+                            </body>
+                          </body>
+                          <site name="ft_site" size="0.01" />
+                        </body>
+                      </body>
+                    </body>
+                    <body name="arm_rgbd_link">
+                      <inertial pos="0 0 0" mass="0.05" diaginertia="2e-05 2e-05 2e-05" />
+                      <geom size="0.02 0.05 0.015" type="box" contype="0" conaffinity="0" group="1" density="0" />
+                      <geom size="0.02 0.05 0.015" type="box" group="3" />
+                      <body name="arm_rgbd_optical" quat="0.5 -0.5 0.5 -0.5" />
+                    </body>
+                  </body>
+                </body>
+              </body>
+            </body>
+          </body>
+        </body>
+        <body name="chassis_rgbd_link" pos="0.12 0 0.45">
+          <inertial pos="0 0 0" mass="0.05" diaginertia="2e-05 2e-05 2e-05" />
+          <geom size="0.02 0.05 0.015" type="box" contype="0" conaffinity="0" group="1" density="0" />
+          <geom size="0.02 0.05 0.015" type="box" group="3" />
+          <body name="chassis_rgbd_optical" quat="0.5 -0.5 0.5 -0.5" />
+        </body>
+      </body>
+      <body name="caster_front_left" pos="0.05 0.101 0.025">
+        <inertial pos="0 0 0" mass="0.16" diaginertia="4e-05 4e-05 4e-05" />
+        <geom size="0.025" contype="0" conaffinity="0" group="1" density="0" friction="0.05 0.005 0.0001" />
+        <geom size="0.025" friction="0.05 0.005 0.0001" group="3" />
+      </body>
+      <body name="caster_front_right" pos="0.05 -0.1 0.025">
+        <inertial pos="0 0 0" mass="0.16" diaginertia="4e-05 4e-05 4e-05" />
+        <geom size="0.025" contype="0" conaffinity="0" group="1" density="0" friction="0.05 0.005 0.0001" />
+        <geom size="0.025" friction="0.05 0.005 0.0001" group="3" />
+      </body>
+      <body name="caster_rear_left" pos="-0.315 0.16 0.025">
+        <inertial pos="0 0 0" mass="0.16" diaginertia="4e-05 4e-05 4e-05" />
+        <geom size="0.025" contype="0" conaffinity="0" group="1" density="0" friction="0.05 0.005 0.0001" />
+        <geom size="0.025" friction="0.05 0.005 0.0001" group="3" />
+      </body>
+      <body name="caster_rear_right" pos="-0.315 -0.16 0.025">
+        <inertial pos="0 0 0" mass="0.16" diaginertia="4e-05 4e-05 4e-05" />
+        <geom size="0.025" contype="0" conaffinity="0" group="1" density="0" friction="0.05 0.005 0.0001" />
+        <geom size="0.025" friction="0.05 0.005 0.0001" group="3" />
+      </body>
+      <body name="imu_link" pos="0 0 0.2">
+        <site name="imu_site" size="0.01" />
+      </body>
+      <body name="laser_link" pos="0.1 0 0.25" />
+    </body>
+  </worldbody>
+  <compiler angle="radian" boundmass="0.001" boundinertia="1e-06" />
+  <actuator>
+    <motor name="arm_joint1" joint="arm_joint1" />
+    <motor name="arm_joint2" joint="arm_joint2" />
+    <motor name="arm_joint3" joint="arm_joint3" />
+    <motor name="arm_joint4" joint="arm_joint4" />
+    <motor name="arm_joint5" joint="arm_joint5" />
+    <motor name="arm_joint6" joint="arm_joint6" />
+    <velocity name="wheel_left_joint" joint="wheel_left_joint" kv="100" />
+    <velocity name="wheel_right_joint" joint="wheel_right_joint" kv="100" />
+  </actuator>
+  <sensor>
+    <framequat name="imu_orientation" objtype="site" objname="imu_site" />
+    <gyro name="imu_gyro" site="imu_site" />
+    <accelerometer name="imu_accel" site="imu_site" />
+    <force name="ft_force" site="ft_site" />
+    <torque name="ft_torque" site="ft_site" />
+  </sensor>
+</mujoco>

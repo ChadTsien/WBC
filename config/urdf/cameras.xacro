@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- Two RGBD frames. Optical: Z forward, X right, Y down (ROS camera).
+       chassis pan is a UI/hardware joint only; keep it out of ros2_control / WBC. -->
+
+  <xacro:macro name="rgbd_body" params="name">
+    <link name="${name}_link">
+      <inertial>
+        <mass value="0.05"/>
+        <inertia ixx="2e-5" ixy="0" ixz="0" iyy="2e-5" iyz="0" izz="2e-5"/>
+      </inertial>
+      <visual>
+        <geometry>
+          <box size="0.04 0.10 0.03"/>
+        </geometry>
+      </visual>
+      <collision>
+        <geometry>
+          <box size="0.04 0.10 0.03"/>
+        </geometry>
+      </collision>
+    </link>
+    <joint name="${name}_optical_joint" type="fixed">
+      <parent link="${name}_link"/>
+      <child link="${name}_optical"/>
+      <origin xyz="0 0 0" rpy="${-pi/2} 0 ${-pi/2}"/>
+    </joint>
+    <link name="${name}_optical"/>
+  </xacro:macro>
+
+  <xacro:macro name="cameras" params="cfg">
+
+    <joint name="chassis_rgbd_joint" type="revolute">
+      <parent link="chassis_link"/>
+      <child link="chassis_rgbd_link"/>
+      <origin
+        xyz="${cfg['chassis_rgbd']['xyz'][0]} ${cfg['chassis_rgbd']['xyz'][1]} ${cfg['chassis_rgbd']['xyz'][2]}"
+        rpy="${cfg['chassis_rgbd']['rpy'][0]} ${cfg['chassis_rgbd']['rpy'][1]} ${cfg['chassis_rgbd']['rpy'][2]}"/>
+      <axis xyz="${cfg['chassis_rgbd']['axis'][0]} ${cfg['chassis_rgbd']['axis'][1]} ${cfg['chassis_rgbd']['axis'][2]}"/>
+      <limit lower="${cfg['chassis_rgbd']['lower']}" upper="${cfg['chassis_rgbd']['upper']}"
+             velocity="${cfg['chassis_rgbd']['velocity']}" effort="${cfg['chassis_rgbd']['effort']}"/>
+    </joint>
+    <xacro:rgbd_body name="chassis_rgbd"/>
+
+    <joint name="arm_rgbd_joint" type="fixed">
+      <parent link="arm_link5"/>
+      <child link="arm_rgbd_link"/>
+      <origin
+        xyz="${cfg['arm_rgbd']['xyz'][0]} ${cfg['arm_rgbd']['xyz'][1]} ${cfg['arm_rgbd']['xyz'][2]}"
+        rpy="${cfg['arm_rgbd']['rpy'][0]} ${cfg['arm_rgbd']['rpy'][1]} ${cfg['arm_rgbd']['rpy'][2]}"/>
+    </joint>
+    <xacro:rgbd_body name="arm_rgbd"/>
+
+  </xacro:macro>
+
+</robot>

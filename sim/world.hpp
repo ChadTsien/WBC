@@ -3,7 +3,7 @@
 #include <memory>
 #include <string>
 
-#include "kine/base.hpp"
+#include "model/chassis_model.hpp"
 #include "types/types.hpp"
 
 namespace T1::sim

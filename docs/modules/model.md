@@ -7,26 +7,29 @@ Pinocchio 2.7 的封装，提供机械臂运动学、动力学和差速底盘运
 
 **测试数据**：单测需要展开后的 URDF。建议在 `test/data/t1.urdf` 放一份由 xacro 生成的文件（`xacro t1.urdf.xacro use_ros2_control:=false > test/data/t1.urdf`），模型改动后重新生成。
 
-**共享 Data 的规则**：`ArmKinematics` 和 `Dynamics` 共用 `RobotModel::data()`。每个周期先 `kinematics.update(q)`，把需要的位姿和雅可比都取走，再调用 `dynamics`。
+**命名**：`ArmModel` 是 6 轴臂（根在 `base_link`）；`ChassisModel` 是差速底盘；全身拼装才是 `RobotModel`（`kine/whole_body`，M1）。
+
+**共享 Data 的规则**：`ArmKinematics` 和 `Dynamics` 共用 `ArmModel::data()`。每个周期先 `kinematics.update(q)`，把需要的位姿和雅可比都取走，再调用 `dynamics`。
 
 ---
 
-### include/t1_model/robot_model.hpp · src/robot_model.cpp
-- **职责**：从 URDF 文本建立"以 base_link 为固定基座的机械臂模型"，锁掉轮子等其他关节；解析坐标系 ID；提供关节限位。
+### model/arm_model.hpp · model/arm_model.cpp
+- **职责**：从 URDF 文本建立机械臂模型（根在 `base_link`），锁掉轮子、相机偏航等非臂关节；解析坐标系 ID；提供关节限位。
 - **实现要点**
   - `pinocchio::urdf::buildModelFromXML(config.urdf_xml, full_model)`。
-  - 不在 `arm_joints` 里的关节（驱动轮）用 `pinocchio::buildReducedModel(full, locked_ids, q_ref, model)` 锁掉。continuous 关节的 nq = 2，`q_ref` 用 `pinocchio::neutral(full)`。
+  - 不在 `arm_joints` 里的关节用 `pinocchio::buildReducedModel(full, locked_ids, q_ref, model)` 锁掉。continuous 关节的 nq = 2，`q_ref` 用 `pinocchio::neutral(full)`。
   - 检查锁完后 `model.nq == 6`，且关节顺序与 `arm_joints` 一致（`model.getJointId(name)` 依次递增），否则抛异常。
-  - `tool_frame`、`ft_frame` 用 `existFrame`/`getFrameId` 解析，不存在就抛异常并带上名字。
+  - `tool_frame`、`ft_frame`、`mount_frame`（默认 `arm_base_link`）用 `existFrame`/`getFrameId` 解析，不存在就抛异常并带上名字。
   - 限位取自 `model.lowerPositionLimit`、`upperPositionLimit`、`velocityLimit`。
-- **测试要点**：加载 `test/data/t1.urdf`：nq == 6；`brush_tip` 和 `ft_sensor` 存在；限位与 `joint_limits.yaml` 一致；传入错误的关节名时抛异常。
+- **测试要点**：加载 `test/data/t1.urdf`：nq == 6；`brush_tip`、`ft_sensor`、`arm_base_link` 存在；限位与 `joint_limits.yaml` 一致；传入错误的关节名时抛异常。
 - **里程碑** M0　**行数预算** ≤ 120
 
-### include/t1_model/arm_kinematics.hpp · src/arm_kinematics.cpp
+### kine/arm.hpp · kine/arm.cpp
 - **职责**：正运动学、坐标系位姿、雅可比（base_link 坐标轴）、可操作度。
 - **实现要点**
   - `update`：`forwardKinematics` → `updateFramePlacements` → `computeJointJacobians`。
   - `frame_pose`：`data.oMf[id]` 转成 `Iso3`（`translation()` 和 `rotation()`）。
+  - `tool_pose_in_mount`：`T_mount⁻¹ · T_tip`，刷头在 `arm_base_link` 下。
   - `frame_jacobian`：`getFrameJacobian(model, data, id, LOCAL_WORLD_ALIGNED, J)`。这里的 "WORLD" 指 Pinocchio 模型的根，也就是 base_link；前 3 行线速度，后 3 行角速度。
   - `manipulability`：取刷头坐标系的 x、y 轴 `u1`、`u2`（都垂直于刷头轴线），组成 5×6 矩阵 `[Jv; u1ᵀJw; u2ᵀJw]`，返回 `sqrt(det(J Jᵀ))`。
 - **测试要点**
@@ -35,7 +38,7 @@ Pinocchio 2.7 的封装，提供机械臂运动学、动力学和差速底盘运
   - 在奇异构型（J5/J6 伸直）附近，`manipulability` 明显变小。
 - **里程碑** M0（位姿、雅可比），M1（可操作度）　**行数预算** ≤ 100
 
-### include/t1_model/base_kinematics.hpp · src/base_kinematics.cpp
+### model/chassis_model.hpp · model/chassis_model.cpp
 - **职责**：差速底盘的轮速与 `[v, ω]` 互转；`[v, ω]` 到"固连在底盘上的一点"的速度雅可比。
 - **实现要点**
   - `v = r(ωl + ωr)/2`，`ω = r(ωr − ωl)/L`；反解 `ωl = (v − ωL/2)/r`，`ωr = (v + ωL/2)/r`。

@@ -11,7 +11,7 @@
 #include "control/task_ee.hpp"
 #include "control/task_posture.hpp"
 #include "estimation/ekf.hpp"
-#include "kine/base.hpp"
+#include "model/chassis_model.hpp"
 #include "signal/compensate.hpp"
 #include "signal/contact.hpp"
 
@@ -32,7 +32,7 @@ namespace T1::wbc
         CommandConfig command;
         ContactConfig contact;
         AdmittanceConfig admittance;
-        DiffDriveParams diff_drive;
+        ChassisModelConfig chassis;
 
         est::EkfConfig ekf;
         Mat3 base_R_imu = Mat3::Identity();

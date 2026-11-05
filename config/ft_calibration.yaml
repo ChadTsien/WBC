@@ -1,8 +1,8 @@
 ft_calibration:
   ros__parameters:
     brushes_yaml: ""                 # empty: <share>/wbc/brushes.yaml
-    raw_wrench_topic: /ft_sensor_broadcaster/wrench
-    imu_topic: /imu_sensor_broadcaster/imu
+    raw_wrench_topic: /ft_sensor_broadcaster/wrench   # 原始六维力话题
+    imu_topic: /imu_sensor_broadcaster/imu            
     reference_topic: /wbc_controller/reference
     status_topic: /wbc_controller/status
     set_brush_service: /wbc_controller/set_brush

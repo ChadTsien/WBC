@@ -1,6 +1,6 @@
 #pragma once
 
-#include "kine/base.hpp"
+#include "model/chassis_model.hpp"
 #include "types/types.hpp"
 
 namespace T1::est
@@ -10,7 +10,7 @@ namespace T1::est
     class DiffDriveOdometry
     {
         public:
-        explicit DiffDriveOdometry(const BaseKinematics& kinematics);
+        explicit DiffDriveOdometry(const ChassisModel& chassis);
 
         void reset(const Pose2d& pose, const WheelSpeeds& wheel_positions);
         // wheel_positions: accumulated wheel angles [rad]; dt > 0.
@@ -20,7 +20,7 @@ namespace T1::est
         BaseTwist twist() const { return twist_; }
 
         private:
-        BaseKinematics kinematics_;
+        ChassisModel chassis_;
         Pose2d pose_;
         BaseTwist twist_;
         WheelSpeeds last_positions_;

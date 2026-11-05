@@ -3,11 +3,11 @@
 namespace T1::wbc
 {
 
-    WbcController::WbcController(const WbcConfig& config, RobotModel& model)
+    WbcController::WbcController(const WbcConfig& config, ArmModel& model)
         : config_(config),
           kinematics_(model),
           dynamics_(model),
-          base_kinematics_(config.diff_drive),
+          chassis_(config.chassis),
           qp_(config.max_inequality_rows),
           solver_(config.qp, config.max_inequality_rows)
     {
