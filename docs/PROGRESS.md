@@ -18,8 +18,8 @@
 | 8 | `config/urdf/arm.xacro` | 完成 | 2026-11-04 |
 | 9 | `config/urdf/end_effector.xacro` | 完成 | 2026-11-04 |
 | 10 | `tools/urdf_to_mjcf.py` | 完成 | 2026-11-05 |
-| 11 | `model/arm_model` | 进行中 | 2026-11-05 |
-| 12 | `kine/arm`（位姿、雅可比） | 未开始 | |
+| 11 | `model/arm_model` | 完成 | 2026-11-05 |
+| 12 | `kine/arm`（位姿、雅可比） | 进行中 | 2026-11-06 |
 | 13 | `model/chassis_model`（互转） | 未开始 | |
 | 14 | `sim/world` | 未开始 | |
 | 15 | `sim/sensors`（IMU） | 未开始 | |

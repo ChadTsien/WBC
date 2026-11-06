@@ -55,8 +55,11 @@ namespace T1
             const pinocchio::Model& model() const;
             pinocchio::Data& data();
 
+            /** 工具头坐标系 */
             int tool_frame_id() const;
+            /** 力传感器坐标系 */
             int ft_frame_id() const;
+            /** 臂基座 arm_base_link */
             int mount_frame_id() const;
             
             /**

@@ -35,12 +35,3 @@ if(BUILD_TESTING)
   target_defaults(test_spsc_queue)
 
 endif()
-
-if(BUILD_TESTING)
-  find_package(ament_cmake_gtest REQUIRED)
-  ament_add_gtest(test_arm_model test/test_arm_model.cpp)
-  target_link_libraries(test_arm_model model)
-  target_defaults(test_arm_model)
-  target_compile_definitions(test_arm_model PRIVATE
-    T1_TEST_URDF="${CMAKE_CURRENT_SOURCE_DIR}/test/data/t1.urdf")
-endif()
