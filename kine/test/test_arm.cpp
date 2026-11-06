@@ -69,7 +69,7 @@ TEST(ArmKinematics, NumericalJacobian)
         const T1::Iso3 T1 = kin.tool_pose();
         
         const T1::Vec3 dp = (T1.translation() - T0.translation()) / eps;
-        const T1::Vec3 dw = T1::so3_log(T0.linear().transpose() * T1.linear()) / eps;
+        const T1::Vec3 dw = T1::so3_log(T1.linear() * T0.linear().transpose()) / eps;
         EXPECT_NEAR((J.col(i).head<3>() - dp).norm(), 0.0, 1e-5) << "joint " << i;
         EXPECT_NEAR((J.col(i).tail<3>() - dw).norm(), 0.0, 1e-5) << "joint " << i;
     }
