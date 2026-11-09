@@ -10,7 +10,7 @@ namespace T1::est
     void DiffDriveOdometry::reset(const Pose2d& pose, const WheelSpeeds& wheel_positions)
     {
         pose_ = pose;
-        twist_ = BaseTwist{};
+        twist_ = ChassisTwist{};
         last_positions_ = wheel_positions;
     }
 

@@ -10,4 +10,8 @@ if(BUILD_TESTING)
   target_defaults(test_arm_model)
   target_compile_definitions(test_arm_model PRIVATE
     T1_TEST_URDF="${CMAKE_CURRENT_SOURCE_DIR}/test/data/t1.urdf")
+  
+  ament_add_gtest(test_chassis_model test/test_chassis_model.cpp)
+  target_link_libraries(test_chassis_model model)
+  target_defaults(test_chassis_model)
 endif()

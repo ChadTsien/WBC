@@ -17,11 +17,10 @@ import mujoco
 ARM_JOINTS = [f"arm_joint{i}" for i in range(1, 7)]
 WHEEL_JOINTS = ("wheel_left_joint", "wheel_right_joint")
 CASTERS = (
-    "caster_front_left",
-    "caster_front_right",
     "caster_rear_left",
     "caster_rear_right",
 )
+WHEEL_BODIES = ("wheel_left_link", "wheel_right_link")
 
 def run_xacro(xacro_path: pathlib.Path) -> str:
     """Expand the xacro with use_ros2_control:=false and return the URDF text."""
@@ -79,12 +78,21 @@ def add_actuators_and_sensors(mjcf_text: str) -> str:
             if joint.tag == "joint" and joint.get("name") == "chassis_rgbd_joint":
                 body.remove(joint)
 
+    # Contact condim is max(geom, floor). Floor is 1: casters stay frictionless,
+    # drive wheels keep 3 so they still grip.
     for name in CASTERS:
         body = _find(root, "body", name)
         if body is None:
-            continue
+            raise RuntimeError(f"missing body {name}")
         for geom in body.iter("geom"):
-            geom.set("friction", "0.05 0.005 0.0001")
+            geom.set("condim", "1")
+    for name in WHEEL_BODIES:
+        body = _find(root, "body", name)
+        if body is None:
+            raise RuntimeError(f"missing body {name}")
+        for geom in body.iter("geom"):
+            if geom.get("contype") != "0":
+                geom.set("condim", "3")
 
     # Visual geoms already have group=1. Put collision in group 3 so the viewer
     # can hide the chassis box without also hiding the floor (group 0).
@@ -147,6 +155,11 @@ def wrap_in_world(mjcf_text: str, world: pathlib.Path) -> str:
         else:
             for child in list(src):
                 dst.append(child)
+
+    floor = _find(scene, "geom", "floor")
+    if floor is None:
+        raise RuntimeError("world missing floor")
+    floor.set("condim", "1")
 
     ET.indent(scene, space="  ")
     return ET.tostring(scene, encoding="unicode")

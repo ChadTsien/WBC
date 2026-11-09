@@ -34,23 +34,26 @@ namespace T1
     class ChassisModel
     {
         public:
-        explicit ChassisModel(const ChassisModelConfig& config);
+            explicit ChassisModel(const ChassisModelConfig& config);
 
-        BaseTwist to_twist(const WheelSpeeds& wheels) const;
-        WheelSpeeds to_wheels(const BaseTwist& twist) const;
+            /** 轮速 -> [v, ω] */
+            ChassisTwist to_twist(const WheelSpeeds& wheels) const;
 
-        /**
-         * [v, ω] → 固连在底盘上一点的 6 维速度（世界系坐标轴）
-         *
-         * 说明
-         * - p_in_base：该点在 base_link 下
-         * - yaw：底盘在世界系的朝向
-         */
-        Eigen::Matrix<double, 6, kNumChassisInputs> point_jacobian(const Vec3& p_in_base,
-                                                                   double yaw) const;
+            /** [v, ω] -> 轮速 */
+            WheelSpeeds to_wheels(const ChassisTwist& twist) const;
+
+            /**
+            * [v, ω] → 固连在底盘上一点的 6 维速度（世界系坐标轴）
+            *
+            * 说明
+            * - p_in_base：该点在 base_link 下
+            * - yaw：底盘在世界系的朝向
+            */
+            Eigen::Matrix<double, 6, kNumChassisInputs> point_jacobian(const Vec3& p_in_base,
+                                                                    double yaw) const;
 
         private:
-        ChassisModelConfig config_;
+            ChassisModelConfig config_;
     };
 
 }  // namespace T1

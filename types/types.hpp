@@ -109,7 +109,7 @@ namespace T1
      * 说明
      * - 不能横移；QP 用这两个量当决策变量，而不是平面三维速度
      */
-    struct BaseTwist
+    struct ChassisTwist
     {
         double v = 0.0;      // m/s along base_link +X
         double omega = 0.0;  // rad/s about +Z

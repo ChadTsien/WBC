@@ -18,7 +18,7 @@ namespace T1::est
         // TODO(M2)
     }
 
-    bool PlanarEkf::update_odometry(const BaseTwist& /*measured*/)
+    bool PlanarEkf::update_odometry(const ChassisTwist& /*measured*/)
     {
         // TODO(M2)
         return false;
@@ -36,10 +36,10 @@ namespace T1::est
         return Pose2d{};
     }
 
-    BaseTwist PlanarEkf::twist() const
+    ChassisTwist PlanarEkf::twist() const
     {
         // TODO(M2)
-        return BaseTwist{};
+        return ChassisTwist{};
     }
 
 }  // namespace T1::est

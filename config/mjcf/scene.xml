@@ -20,7 +20,7 @@
   </asset>
   <worldbody>
     <light pos="0 0 4" dir="0 0 -1" />
-    <geom name="floor" type="plane" size="20 20 0.1" material="grid" friction="1.0 0.005 0.0001" />
+    <geom name="floor" type="plane" size="20 20 0.1" material="grid" friction="1.0 0.005 0.0001" condim="1" />
     <body name="base_link">
       <freejoint name="base_free" />
       <body name="chassis_link" pos="-0.16 0 0.0418">
@@ -31,13 +31,13 @@
           <inertial pos="-2.5956e-08 1.4735e-07 -0.031758" quat="0.270598 0.653281 -0.270598 0.653281" mass="5" diaginertia="0.00085288 0.000472651 0.000472649" />
           <joint name="wheel_left_joint" pos="0 0 0" axis="0 0 -1" />
           <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="wheel_left_link" />
-          <geom size="0.0655 0.025" type="cylinder" group="3" />
+          <geom size="0.0655 0.025" type="cylinder" condim="3" group="3" />
         </body>
         <body name="wheel_right_link" pos="0.16 -0.20275 0.0237" quat="0.5 0.5 -0.5 0.5">
           <inertial pos="2.4542e-08 1.2337e-08 0.032242" quat="0.653281 0.270598 -0.653281 0.270598" mass="5" diaginertia="0.00085288 0.000472653 0.000472647" />
           <joint name="wheel_right_joint" pos="0 0 0" axis="0 0 -1" />
           <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="wheel_right_link" />
-          <geom size="0.0655 0.025" type="cylinder" group="3" />
+          <geom size="0.0655 0.025" type="cylinder" condim="3" group="3" />
         </body>
         <body name="arm_base_link" pos="0.153 0 0.88765">
           <inertial pos="0 0 0" mass="0.5" diaginertia="1e-06 1e-06 1e-06" />
@@ -112,25 +112,15 @@
           <body name="chassis_rgbd_optical" quat="0.5 -0.5 0.5 -0.5" />
         </body>
       </body>
-      <body name="caster_front_left" pos="0.05 0.101 0.025">
-        <inertial pos="0 0 0" mass="0.16" diaginertia="4e-05 4e-05 4e-05" />
-        <geom size="0.025" contype="0" conaffinity="0" group="1" density="0" friction="0.05 0.005 0.0001" />
-        <geom size="0.025" friction="0.05 0.005 0.0001" group="3" />
-      </body>
-      <body name="caster_front_right" pos="0.05 -0.1 0.025">
-        <inertial pos="0 0 0" mass="0.16" diaginertia="4e-05 4e-05 4e-05" />
-        <geom size="0.025" contype="0" conaffinity="0" group="1" density="0" friction="0.05 0.005 0.0001" />
-        <geom size="0.025" friction="0.05 0.005 0.0001" group="3" />
-      </body>
       <body name="caster_rear_left" pos="-0.315 0.16 0.025">
         <inertial pos="0 0 0" mass="0.16" diaginertia="4e-05 4e-05 4e-05" />
-        <geom size="0.025" contype="0" conaffinity="0" group="1" density="0" friction="0.05 0.005 0.0001" />
-        <geom size="0.025" friction="0.05 0.005 0.0001" group="3" />
+        <geom size="0.025" contype="0" conaffinity="0" group="1" density="0" condim="1" />
+        <geom size="0.025" condim="1" group="3" />
       </body>
       <body name="caster_rear_right" pos="-0.315 -0.16 0.025">
         <inertial pos="0 0 0" mass="0.16" diaginertia="4e-05 4e-05 4e-05" />
-        <geom size="0.025" contype="0" conaffinity="0" group="1" density="0" friction="0.05 0.005 0.0001" />
-        <geom size="0.025" friction="0.05 0.005 0.0001" group="3" />
+        <geom size="0.025" contype="0" conaffinity="0" group="1" density="0" condim="1" />
+        <geom size="0.025" condim="1" group="3" />
       </body>
       <body name="imu_link" pos="0 0 0.2">
         <site name="imu_site" size="0.01" />

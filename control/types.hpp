@@ -35,7 +35,7 @@ namespace T1::wbc
     {
         BaseMode base_mode = BaseMode::kFree;
         Pose2d base_pose;
-        BaseTwist base_twist;
+        ChassisTwist base_twist;
         Iso3 ee_pose = Iso3::Identity();
         Twist ee_twist;
         ContactPhase contact_phase = ContactPhase::kNone;
@@ -55,7 +55,7 @@ namespace T1::wbc
     {
         ArmState arm;
         Pose2d base_pose;  // odom frame, from the estimator
-        BaseTwist base_twist;
+        ChassisTwist base_twist;
         Vec3 gravity_in_base = Vec3(0.0, 0.0, -9.81);
         Vec3 ext_force_world = Vec3::Zero();  // compensated, at brush_tip
         Vec3 ext_torque_world = Vec3::Zero();
@@ -65,7 +65,7 @@ namespace T1::wbc
     struct Output
     {
         MitCommand arm;
-        BaseTwist base;
+        ChassisTwist base;
         WheelSpeeds wheels;
         WbcVec qp_solution = WbcVec::Zero();
         QpStatus qp_status = QpStatus::kNotRun;

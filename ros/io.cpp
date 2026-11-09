@@ -17,7 +17,7 @@ namespace T1::wbc
         return *trajectory_buffer_.readFromRT();
     }
 
-    std::optional<BaseTwist> WbcRosIo::teleop(double /*now_s*/)
+    std::optional<ChassisTwist> WbcRosIo::teleop(double /*now_s*/)
     {
         // TODO(M1)
         return std::nullopt;

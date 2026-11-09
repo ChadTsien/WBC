@@ -20,10 +20,10 @@
 | 10 | `tools/urdf_to_mjcf.py` | 完成 | 2026-11-05 |
 | 11 | `model/arm_model` | 完成 | 2026-11-05 |
 | 12 | `kine/arm`（位姿、雅可比） | 完成 | 2026-11-06 |
-| 13 | `model/chassis_model`（互转） | 未开始 | |
-| 14 | `sim/world` | 未开始 | |
-| 15 | `sim/sensors`（IMU） | 未开始 | |
-| 16 | `sim/viewer` | 未开始 | |
+| 13 | `model/chassis_model`（互转） | 完成 | 2026-11-07 |
+| 14 | `sim/world` | 完成 | 2026-11-09 |
+| 15 | `sim/sensors`（IMU） | 进行中 | 2026-11-09 |
+| 16 | `sim/viewer` | 完成 | 2026-11-09 |
 | 17 | `ros/sim_system` | 未开始 | |
 | — | `tools/rerun_view.py` | 完成 | 2026-11-02 |
 | — | M0 验收：Rerun 里能看到坐标系和曲线；Pinocchio 与 MuJoCo 误差 < 0.1 mm | 未开始 | |

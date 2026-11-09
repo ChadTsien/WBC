@@ -52,7 +52,7 @@ namespace T1::wbc
 
         // --- RT side, called from update() ---
         std::shared_ptr<const StampedTrajectory> trajectory();
-        std::optional<BaseTwist> teleop(double now_s);
+        std::optional<ChassisTwist> teleop(double now_s);
         bool take_tare_request();
         std::optional<ft::ToolGravityParams> take_brush_change(std::string* brush_id);
 
@@ -79,7 +79,7 @@ namespace T1::wbc
         realtime_tools::RealtimeBuffer<std::shared_ptr<const StampedTrajectory>> trajectory_buffer_;
         struct TimedTwist
         {
-            BaseTwist twist;
+            ChassisTwist twist;
             double stamp_s = -1.0;
         };
         realtime_tools::RealtimeBuffer<TimedTwist> teleop_buffer_;

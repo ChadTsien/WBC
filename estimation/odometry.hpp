@@ -17,12 +17,12 @@ namespace T1::est
         void update(const WheelSpeeds& wheel_positions, double dt);
 
         Pose2d pose() const { return pose_; }
-        BaseTwist twist() const { return twist_; }
+        ChassisTwist twist() const { return twist_; }
 
         private:
         ChassisModel chassis_;
         Pose2d pose_;
-        BaseTwist twist_;
+        ChassisTwist twist_;
         WheelSpeeds last_positions_;
     };
 

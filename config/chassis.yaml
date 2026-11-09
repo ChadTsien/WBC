@@ -6,11 +6,9 @@ wheel_width: 0.05             # m, 轮宽
 axle_x_in_chassis: 0.16       # m, 轴中心偏移
 axle_z_in_chassis: 0.0237     # m, wheel centre z in chassis_link
 
-# 万向轮
+# 后万向轮（驱动轴附近没有支撑球）
 caster_radius: 0.025          # m, est
 casters:
-  front_left:  [0.050, 0.101]
-  front_right: [0.050, -0.100]
   rear_left:   [-0.315, 0.160]
   rear_right:  [-0.315, -0.160]
 

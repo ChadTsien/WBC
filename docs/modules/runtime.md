@@ -8,7 +8,7 @@
 ---
 
 ### include/t1_common/types.hpp
-- **职责**：全项目共用的类型和维度常量：`Vec3/Vec5/ArmVec/WbcVec`、`Wrench`、`Twist`、`Pose2d`、`BaseTwist`、`ArmState`、`MitCommand`。
+- **职责**：全项目共用的类型和维度常量：`Vec3/Vec5/ArmVec/WbcVec`、`Wrench`、`Twist`、`Pose2d`、`ChassisTwist`、`ArmState`、`MitCommand`。
 - **状态**：完成（纯声明）。
 - **注意**：`kNumWbcDof = 8`（v、ω + 6 个关节），`kTaskDim = 5`（位置 3 + 刷头轴线指向 2）。改这里会牵动 QP 维度。
 

@@ -34,7 +34,7 @@
 - **里程碑** M0（占位）；安装位实测后改 yaml。
 
 ### urdf/chassis.xacro
-- **职责**：`base_link`、`chassis_joint`、`chassis_link`、两个驱动轮、四个万向轮小球、`imu_link`、`laser_link`。
+- **职责**：`base_link`、`chassis_joint`、`chassis_link`、两个驱动轮、两个后万向轮小球、`imu_link`、`laser_link`。
 - **实现要点**
   - `chassis_joint`：CAD 已是 +X 朝前，`rpy="0 0 0"`；平移 `xyz=(-axle_x, 0, wheel_radius − axle_z)`，使 `base_link` 原点在驱动轴中点地面投影。
   - 驱动轮：`continuous`；CAD 的 child +Z 经 rpy 后沿底盘 −Y，`axis="0 0 -1"` 使正转 = 车往前。
@@ -69,7 +69,7 @@
     - 底盘加 `freejoint`；
     - 每个机械臂关节一个 `motor` 执行器（力矩由硬件插件按 MIT 公式算）；
     - 驱动轮用 `velocity` 执行器；
-    - 万向轮小球摩擦设得很低；
+    - 后万向轮碰撞 `condim=1`，地面 `condim=1`，驱动轮 `condim=3`；
     - 传感器：IMU 用 `framequat` + `gyro` + `accelerometer`（site 放在 `imu_link`），力传感器用 `force` + `torque`（site 放在 `ft_sensor`）。
   - `wrap_in_world`：把 world 文件里的 `worldbody` 子元素、`asset`、`option` 合并进来。
 - **验收**：生成的 `mjcf/t1_scene.xml` 能用 `python3 -m mujoco.viewer --mjcf=...` 打开，机器人站在地上不抖；Pinocchio 与 MuJoCo 在随机关节角下 `brush_tip` 位置误差 < 0.1 mm。

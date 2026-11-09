@@ -28,11 +28,11 @@ namespace T1::est
 
         void predict(double dt);
         // Returns false if the measurement was rejected by the gate.
-        bool update_odometry(const BaseTwist& measured);
+        bool update_odometry(const ChassisTwist& measured);
         bool update_gyro(double omega_z);
 
         Pose2d pose() const;
-        BaseTwist twist() const;
+        ChassisTwist twist() const;
         const Cov& covariance() const { return P_; }
 
         private:

@@ -116,12 +116,6 @@
       </collision>
     </link>
 
-    <xacro:caster_ball name="front_left"
-      x="${cfg['casters']['front_left'][0]}" y="${cfg['casters']['front_left'][1]}"
-      radius="${cfg['caster_radius']}"/>
-    <xacro:caster_ball name="front_right"
-      x="${cfg['casters']['front_right'][0]}" y="${cfg['casters']['front_right'][1]}"
-      radius="${cfg['caster_radius']}"/>
     <xacro:caster_ball name="rear_left"
       x="${cfg['casters']['rear_left'][0]}" y="${cfg['casters']['rear_left'][1]}"
       radius="${cfg['caster_radius']}"/>
