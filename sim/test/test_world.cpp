@@ -1,5 +1,9 @@
+#include "model/chassis_model.hpp"
 #include "sim/world.hpp"
 #include "types/types.hpp"
+
+#include <cstdlib>
+#include <cmath>
 
 #include "gtest/gtest.h"
 
@@ -66,4 +70,37 @@ TEST(MujocoWorld, EqualWheelsDriveForward)
     const T1::sim::GroundTruth gt = world.ground_truth();
     EXPECT_GT(gt.base_pose.x, 0.9);
     EXPECT_NEAR(gt.base_pose.yaw, 0.0, 0.1);
+}
+
+TEST(MujocoWorld, ImuAtRest)
+{
+    T1::sim::MujocoWorld world(make_cfg());
+    world.reset();
+    for (int i = 0; i < 200; ++i) 
+    {
+        world.step();
+    }
+    const T1::Quat q = world.imu_orientation();
+    EXPECT_NEAR(q.w(), 1.0, 0.05);
+    EXPECT_NEAR(q.vec().norm(), 0.0, 0.05);
+    EXPECT_NEAR(world.imu_angular_velocity().norm(), 0.0, 0.05);
+    const T1::Vec3 a = world.imu_linear_acceleration();
+    EXPECT_NEAR(a.x(), 0.0, 0.3);
+    EXPECT_NEAR(a.y(), 0.0, 0.3);
+    EXPECT_NEAR(std::abs(a.z()), 9.81, 0.3);
+}
+
+TEST(MujocoWorld, ImuYawRateWhenSpinning)
+{
+    T1::sim::MujocoWorld world(make_cfg());
+    world.reset();
+    T1::WheelSpeeds w;
+    w.left = 5.0;
+    w.right = -5.0;
+    world.set_wheel_command(w);
+    for (int i = 0; i < 500; ++i) 
+    {
+        world.step();
+    }
+    EXPECT_LT(world.imu_angular_velocity().z(), -0.5);
 }

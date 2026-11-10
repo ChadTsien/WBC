@@ -65,5 +65,19 @@ install(DIRECTORY config/ DESTINATION share/${PROJECT_NAME})
 install(DIRECTORY launch/ DESTINATION share/${PROJECT_NAME}/launch)
 install(PROGRAMS tools/urdf_to_mjcf.py tools/rerun_view.py DESTINATION lib/${PROJECT_NAME})
 
+# Must live in this CMakeLists (same scope as ament_package). A subdirectory
+# call never registers the ament index, so pluginlib cannot find the plugins.
+pluginlib_export_plugin_description_file(hardware_interface ros/sim_plugin.xml)
+pluginlib_export_plugin_description_file(controller_interface ros/wbc_plugin.xml)
+
+# pluginlib walks up from the XML and tinyxml2-parses the first package.xml.
+# The share-tree copy can fail that parse; a generated stub next to the XML
+# is always well-formed and names this package.
+file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/pluginlib_package.xml"
+  "<?xml version=\"1.0\"?>\n<package format=\"3\">\n  <name>${PROJECT_NAME}</name>\n</package>\n")
+install(FILES "${CMAKE_CURRENT_BINARY_DIR}/pluginlib_package.xml"
+  DESTINATION share/${PROJECT_NAME}/ros
+  RENAME package.xml)
+
 ament_export_dependencies(rosidl_default_runtime)
 ament_package()

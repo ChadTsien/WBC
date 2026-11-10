@@ -1,4 +1,5 @@
 #include "kine/arm.hpp"
+#include <Eigen/src/Core/Matrix.h>
 
 #include <pinocchio/algorithm/frames.hpp>
 #include <pinocchio/algorithm/jacobian.hpp>
@@ -64,8 +65,18 @@ namespace T1
 
     double ArmKinematics::manipulability() const
     {
-        // TODO(M1)
-        return 0.0;
+        const ArmJacobian J6 = tool_jacobian();
+        const Eigen::Matrix3d R = tool_pose().linear();
+        const Vec3 u1 = R.col(0);
+        const Vec3 u2 = R.col(1);
+
+        Eigen::Matrix<double, kTaskDim, kNumArmJoints> j;
+        j.template topRows<3>() = J6.topRows<3>();
+        j.row(3) = u1.transpose() * J6.bottomRows<3>();
+        j.row(4) = u2.transpose() * J6.bottomRows<3>();
+        
+        const double det = (j * j.transpose()).determinant();
+        return std::sqrt(std::max(0.0, det));
     }
 
 }  // namespace T1

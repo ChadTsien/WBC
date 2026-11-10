@@ -31,6 +31,7 @@
         <xacro:if value="${use_sim}">
           <plugin>T1::sim::SimSystem</plugin>
           <param name="mjcf_path">$(find wbc)/mjcf/scene.xml</param>
+          <param name="sim_config">$(find wbc)/sim.yaml</param>
         </xacro:if>
         <xacro:unless value="${use_sim}">
           <plugin>T1::hal::HardwareSystem</plugin>

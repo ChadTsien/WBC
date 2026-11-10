@@ -22,9 +22,9 @@
 | 12 | `kine/arm`（位姿、雅可比） | 完成 | 2026-11-06 |
 | 13 | `model/chassis_model`（互转） | 完成 | 2026-11-07 |
 | 14 | `sim/world` | 完成 | 2026-11-09 |
-| 15 | `sim/sensors`（IMU） | 进行中 | 2026-11-09 |
+| 15 | `sim/sensors`（IMU） | 完成 | 2026-11-10 |
 | 16 | `sim/viewer` | 完成 | 2026-11-09 |
-| 17 | `ros/sim_system` | 未开始 | |
+| 17 | `ros/sim_system` | 完成 | 2026-11-10 |
 | — | `tools/rerun_view.py` | 完成 | 2026-11-02 |
 | — | M0 验收：Rerun 里能看到坐标系和曲线；Pinocchio 与 MuJoCo 误差 < 0.1 mm | 未开始 | |
 
@@ -32,11 +32,11 @@
 
 | # | 文件 | 状态 | 日期 |
 |---|---|---|---|
-| 18 | `runtime/rt_thread` | 未开始 | |
-| 19 | `runtime/loop_timer` | 未开始 | |
-| 20 | `model/chassis_model`（point_jacobian） | 未开始 | |
-| 21 | `kine/arm`（manipulability） | 未开始 | |
-| 22 | `kine/whole_body` | 未开始 | |
+| 18 | `runtime/rt_thread` | 完成 | 2026-11-10 |
+| 19 | `runtime/loop_timer` | 完成 | 2026-11-10 |
+| 20 | `model/chassis_model`（point_jacobian） | 完成 | 2026-11-10 |
+| 21 | `kine/arm`（manipulability） | 完成 | 2026-11-10 |
+| 22 | `kine/whole_body` | 进行中 | 2026-11-10 |
 | 23 | `control/qp_problem` | 未开始 | |
 | 24 | `control/qp_solver` | 未开始 | |
 | 25 | `control/reference` | 未开始 | |

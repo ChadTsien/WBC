@@ -56,10 +56,17 @@ namespace T1
             * - 参考点在该坐标系原点；轴与 base_link 平行（LOCAL_WORLD_ALIGNED）
             */
             ArmJacobian frame_jacobian(int frame_id) const;
+
+            /** 工具坐标系雅可比 */
             ArmJacobian tool_jacobian() const;
 
-            // sqrt(det(J J^T)) of the 5-row task Jacobian: linear rows plus the two angular rows
-            // perpendicular to the brush axis.
+            /**
+             * 5 维任务可操作度 sqrt(det(J Jᵀ))
+             *
+             * 说明
+             * - J = [Jv; u1ᵀ Jw; u2ᵀ Jw]，u1/u2 是刷头系 x、y 轴（垂直刷头轴线）
+             * - 须先 update(q)
+             */
             double manipulability() const;
 
         private:

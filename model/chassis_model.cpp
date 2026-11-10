@@ -1,4 +1,6 @@
 #include "model/chassis_model.hpp"
+#include <Eigen/src/Core/Matrix.h>
+#include <cmath>
 #include "types/types.hpp"
 
 namespace T1
@@ -27,10 +29,22 @@ namespace T1
     }
 
     Eigen::Matrix<double, 6, kNumChassisInputs> ChassisModel::point_jacobian(
-        const Vec3& /*p_in_base*/, double /*yaw*/) const
+        const Vec3& p_in_base, double yaw) const
     {
-        // TODO(M1)
-        return Eigen::Matrix<double, 6, kNumChassisInputs>::Zero();
+        const double c = std::cos(yaw);
+        const double s = std::sin(yaw);
+        const Vec3 p_w(c * p_in_base.x() - s * p_in_base.y(),
+                       s * p_in_base.x() + c * p_in_base.y(),
+                       p_in_base.z());
+
+        Eigen::Matrix<double, 6, kNumChassisInputs> j;
+        j.setZero();
+        j(0, 0) = c;
+        j(1, 0) = s;
+        j(0, 1) = -p_w.y();
+        j(1, 1) = p_w.x();
+        j(5, 1) = 1.0;
+        return j;
     }
 
 }  // namespace T1

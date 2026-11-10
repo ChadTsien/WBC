@@ -74,3 +74,23 @@ TEST(ArmKinematics, NumericalJacobian)
         EXPECT_NEAR((J.col(i).tail<3>() - dw).norm(), 0.0, 1e-5) << "joint " << i;
     }
 }
+
+TEST(ArmKinematics, ManipulabilityDropsNearWristStretch)
+{
+    T1::ArmModel arm = make_arm();
+    T1::ArmKinematics kin(arm);
+
+    T1::ArmVec q_ok;
+    q_ok << 0.3, -0.4, 0.1, 0.5, -0.8, 0.2;
+    kin.update(q_ok);
+    const double m_ok = kin.manipulability();
+
+    T1::ArmVec q_sing = q_ok;
+    q_sing[4] = 0.0;
+    q_sing[5] = 0.0;
+    kin.update(q_sing);
+    const double m_sing = kin.manipulability();
+    
+    EXPECT_GT(m_ok, 0.0);
+    EXPECT_LT(m_sing, m_ok);
+}

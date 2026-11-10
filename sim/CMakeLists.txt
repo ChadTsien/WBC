@@ -26,4 +26,8 @@ if(BUILD_TESTING)
   target_defaults(view_world)
   target_compile_definitions(view_world PRIVATE
     T1_TEST_MJCF="${CMAKE_SOURCE_DIR}/config/mjcf/scene.xml")
+
+  ament_add_gtest(test_sensors test/test_sensors.cpp)
+  target_link_libraries(test_sensors sim)
+  target_defaults(test_sensors)
 endif()

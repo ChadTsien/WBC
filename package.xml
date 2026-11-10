@@ -42,5 +42,7 @@
 
   <export>
     <build_type>ament_cmake</build_type>
+    <hardware_interface plugin="${prefix}/ros/sim_plugin.xml"/>
+    <controller_interface plugin="${prefix}/ros/wbc_plugin.xml"/>
   </export>
 </package>

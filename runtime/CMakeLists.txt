@@ -34,4 +34,11 @@ if(BUILD_TESTING)
   target_link_libraries(test_spsc_queue runtime)
   target_defaults(test_spsc_queue)
 
+  ament_add_gtest(test_rt_thread test/test_rt_thread.cpp)
+  target_link_libraries(test_rt_thread runtime)
+  target_defaults(test_rt_thread)
+
+  ament_add_gtest(test_loop_timer test/test_loop_timer.cpp)
+  target_link_libraries(test_loop_timer runtime)
+  target_defaults(test_loop_timer)
 endif()

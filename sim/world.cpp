@@ -38,6 +38,9 @@ namespace T1::sim
         int base_vadr = -1;
         int chassis_body = -1;
         int brush_site = -1;
+        int imu_quat_adr = -1;              // sensordata：framequat wxyz
+        int imu_gyro_adr = -1;              // 角速度，IMU 系
+        int imu_accel_adr = -1;             // 加速度（含重力），IMU 系
 
         ~Impl()
         {
@@ -102,6 +105,10 @@ namespace T1::sim
         impl_->base_vadr = m->jnt_dofadr[impl_->base_jnt];
         impl_->chassis_body = require_id(m, mjOBJ_BODY, "chassis_link");
         impl_->brush_site = require_id(m, mjOBJ_SITE, "brush_tip");
+
+        impl_->imu_quat_adr = m->sensor_adr[require_id(m, mjOBJ_SENSOR, "imu_orientation")];
+        impl_->imu_gyro_adr = m->sensor_adr[require_id(m, mjOBJ_SENSOR, "imu_gyro")];
+        impl_->imu_accel_adr = m->sensor_adr[require_id(m, mjOBJ_SENSOR, "imu_accel")];
     }
 
     MujocoWorld::~MujocoWorld() = default;
@@ -195,20 +202,23 @@ namespace T1::sim
 
     Quat MujocoWorld::imu_orientation() const
     {
-        // TODO(M2)
-        return Quat::Identity();
+        std::lock_guard<std::mutex> lock(impl_->mutex);
+        const double* s = impl_->data->sensordata + impl_->imu_quat_adr;
+        return Quat(s[0], s[1], s[2], s[3]);   // MuJoCo  wxyz
     }
 
     Vec3 MujocoWorld::imu_angular_velocity() const
     {
-        // TODO(M2)
-        return Vec3::Zero();
+        std::lock_guard<std::mutex> lock(impl_->mutex);
+        const double* s = impl_->data->sensordata + impl_->imu_gyro_adr;
+        return Vec3(s[0], s[1], s[2]);
     }
 
     Vec3 MujocoWorld::imu_linear_acceleration() const
     {
-        // TODO(M2)
-        return Vec3::Zero();
+        std::lock_guard<std::mutex> lock(impl_->mutex);
+        const double* s = impl_->data->sensordata + impl_->imu_accel_adr;
+        return Vec3(s[0], s[1], s[2]);
     }
 
     GroundTruth MujocoWorld::ground_truth() const

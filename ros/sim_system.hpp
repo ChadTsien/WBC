@@ -17,32 +17,34 @@ namespace T1::sim
     class SimSystem : public hardware_interface::SystemInterface
     {
         public:
-        CallbackReturn on_init(const hardware_interface::HardwareInfo& info) override;
-        CallbackReturn on_activate(const rclcpp_lifecycle::State& previous_state) override;
-        CallbackReturn on_deactivate(const rclcpp_lifecycle::State& previous_state) override;
+            CallbackReturn on_init(const hardware_interface::HardwareInfo& info) override;
+            CallbackReturn on_activate(const rclcpp_lifecycle::State& previous_state) override;
+            CallbackReturn on_deactivate(const rclcpp_lifecycle::State& previous_state) override;
 
-        std::vector<hardware_interface::StateInterface> export_state_interfaces() override;
-        std::vector<hardware_interface::CommandInterface> export_command_interfaces() override;
+            std::vector<hardware_interface::StateInterface> export_state_interfaces() override;
+            std::vector<hardware_interface::CommandInterface> export_command_interfaces() override;
 
-        hardware_interface::return_type read(const rclcpp::Time& time,
-                                             const rclcpp::Duration& period) override;
-        hardware_interface::return_type write(const rclcpp::Time& time,
-                                              const rclcpp::Duration& period) override;
+            hardware_interface::return_type read(const rclcpp::Time& time,
+                                                const rclcpp::Duration& period) override;
+            hardware_interface::return_type write(const rclcpp::Time& time,
+                                                const rclcpp::Duration& period) override;
 
         private:
-        std::unique_ptr<MujocoWorld> world_;
-        std::unique_ptr<SimViewer> viewer_;
-        std::unique_ptr<FtSensorModel> ft_model_;
-        std::unique_ptr<ImuModel> imu_model_;
+            std::unique_ptr<MujocoWorld> world_;
+            std::unique_ptr<SimViewer> viewer_;
+            std::unique_ptr<FtSensorModel> ft_model_;
+            std::unique_ptr<ImuModel> imu_model_;
 
-        // Interface storage, index order = joint order in HardwareInfo.
-        std::vector<double> arm_cmd_position_, arm_cmd_velocity_, arm_cmd_effort_;
-        std::vector<double> arm_cmd_stiffness_, arm_cmd_damping_;
-        std::vector<double> arm_state_position_, arm_state_velocity_, arm_state_effort_;
-        std::vector<double> wheel_cmd_velocity_, wheel_state_position_, wheel_state_velocity_;
-        std::vector<double>
-            imu_state_;  // orientation xyzw, angular_velocity xyz, linear_acceleration xyz
-        std::vector<double> ft_state_;  // force xyz, torque xyz
+            // Interface storage, index order = joint order in HardwareInfo.
+            std::vector<double> arm_cmd_position_, arm_cmd_velocity_, arm_cmd_effort_;
+            std::vector<double> arm_cmd_stiffness_, arm_cmd_damping_;
+            std::vector<double> arm_state_position_, arm_state_velocity_, arm_state_effort_;
+            std::vector<double> wheel_cmd_velocity_, wheel_state_position_, wheel_state_velocity_;
+            std::vector<double>
+                imu_state_;  // orientation xyzw, angular_velocity xyz, linear_acceleration xyz
+            std::vector<double> ft_state_;  // force xyz, torque xyz
+            double timestep_ = 0.001;
+            bool enable_viewer_ = false;
     };
 
 }  // namespace T1::sim
