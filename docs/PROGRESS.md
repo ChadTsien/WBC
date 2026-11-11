@@ -36,8 +36,8 @@
 | 19 | `runtime/loop_timer` | 完成 | 2026-11-10 |
 | 20 | `model/chassis_model`（point_jacobian） | 完成 | 2026-11-10 |
 | 21 | `kine/arm`（manipulability） | 完成 | 2026-11-10 |
-| 22 | `kine/whole_body` | 进行中 | 2026-11-10 |
-| 23 | `control/qp_problem` | 未开始 | |
+| 22 | `kine/whole_body` | 完成 | 2026-11-11 |
+| 23 | `control/qp_problem` | 进行中 | 2026-11-11 |
 | 24 | `control/qp_solver` | 未开始 | |
 | 25 | `control/reference` | 未开始 | |
 | 26 | `control/task_ee` | 未开始 | |

@@ -14,4 +14,11 @@ if(BUILD_TESTING)
   target_defaults(test_arm)
   target_compile_definitions(test_arm PRIVATE
     T1_TEST_URDF="${CMAKE_SOURCE_DIR}/model/test/data/t1.urdf")
+
+  ament_add_gtest(test_whole_body test/test_whole_body.cpp)
+  target_link_libraries(test_whole_body kine)
+  target_defaults(test_whole_body)
+  target_compile_definitions(test_whole_body PRIVATE
+    T1_TEST_URDF="${CMAKE_SOURCE_DIR}/model/test/data/t1.urdf")
+    
 endif()
