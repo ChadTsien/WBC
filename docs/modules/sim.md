@@ -25,12 +25,12 @@ MuJoCo 仿真，以 ros2_control 硬件插件的形式接入。控制器看到�
     - 然后 `mj_step`，整个过程加锁。
   - 传感器读取用 `sensordata[adr..adr+n)`。MuJoCo 的 `force`/`torque` 传感器给出的是"子体作用在父体上"的力，符号和坐标系要对照力传感器手册定义，必要时取反。
   - `imu_linear_acceleration` 用 `accelerometer` 传感器（含重力反作用，与真实 IMU 一致）。
-  - `ground_truth`：从底盘的 freejoint `qpos` 解算 x、y、yaw，从 site 的 `xpos`/`xmat` 得到刷头位姿。
+  - `ground_truth`：从底盘的 freejoint `qpos` 解算 x、y、yaw，从 site 的 `xpos`/`xmat` 得到工具位姿。
 - **测试要点**（需要生成好的 MJCF）
   - 零力矩下机械臂受重力下垂，底盘静止不动。
   - kp = 20、kd = 1、q_des = 0.3 时，J1 在 1 s 内收敛到 0.3。
   - 两轮同速时，`ground_truth` 的 yaw 不变、x 增加。
-  - 静止时 `ft_raw` 的力 ≈ 刷头重量（方向随姿态变化）。
+  - 静止时 `ft_raw` 的力 ≈ 工具重量（方向随姿态变化）。
 - **里程碑** M0　**行数预算** ≤ 220（超出时把 id 查找拆到 `mujoco_ids.cpp`）
 
 ### include/t1_sim/core/sensor_models.hpp · src/core/sensor_models.cpp
@@ -65,11 +65,11 @@ MuJoCo 仿真，以 ros2_control 硬件插件的形式接入。控制器看到�
 - **里程碑** M0　**行数预算** ≤ 200
 
 ### worlds/flat.xml · worlds/cleaning_wall.xml
-- **职责**：场景。flat 为空地；cleaning_wall 有一面竖墙、一个 20° 斜面和带槽位的刷头座。
+- **职责**：场景。flat 为空地；cleaning_wall 有一面竖墙、一个 20° 斜面和带槽位的工具座。
 - **注意**：`urdf_to_mjcf.py --world` 会把机器人合并进去，生成 `t1_description/mjcf/t1_scene.xml`。
 
 ### config/sim.yaml
 - **职责**：物理步长、是否开窗口、噪声参数、随机种子。
 
 ### 计划中
-- `core/brush_attachment.hpp/.cpp`（M6）：用 MuJoCo 的 weld equality 模拟磁吸取放刷头。
+- `core/brush_attachment.hpp/.cpp`（M6）：用 MuJoCo 的 weld equality 模拟磁吸取放工具。

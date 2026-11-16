@@ -13,7 +13,7 @@ posture_task:
   weight: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
   kp: 1.0
 
-base_task:
+chassis_task:
   regularization: 10.0
   track_weight: 10000.0
   kp_position: 1.0

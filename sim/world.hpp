@@ -33,8 +33,8 @@ namespace T1::sim
      */
     struct GroundTruth
     {
-        Pose2d base_pose;
-        ChassisTwist base_twist;
+        Pose2d chassis_pose;
+        ChassisTwist chassis_twist;
         Iso3 tool_pose_world = Iso3::Identity();
     };
 
@@ -86,7 +86,7 @@ namespace T1::sim
              * 仿真真值（世界系）
              *
              * 说明
-             * - 底盘 x/y/yaw、[v, ω]，刷头 Iso3
+             * - 底盘 x/y/yaw、[v, ω]，工具 Iso3
              * - 只给测试和 Rerun；估计器运行时不要读
              */
             GroundTruth ground_truth() const;

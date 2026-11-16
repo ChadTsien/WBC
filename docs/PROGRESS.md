@@ -37,10 +37,10 @@
 | 20 | `model/chassis_model`（point_jacobian） | 完成 | 2026-11-10 |
 | 21 | `kine/arm`（manipulability） | 完成 | 2026-11-10 |
 | 22 | `kine/whole_body` | 完成 | 2026-11-11 |
-| 23 | `control/qp_problem` | 进行中 | 2026-11-11 |
-| 24 | `control/qp_solver` | 未开始 | |
-| 25 | `control/reference` | 未开始 | |
-| 26 | `control/task_ee` | 未开始 | |
+| 23 | `control/qp_problem` | 完成 | 2026-11-16 |
+| 24 | `control/qp_solver` | 完成 | 2026-11-16 |
+| 25 | `control/reference` | 完成 | 2026-11-16 |
+| 26 | `control/task_ee` | 进行中 | 2026-11-16 |
 | 27 | `control/task_posture` | 未开始 | |
 | 28 | `control/task_base` | 未开始 | |
 | 29 | `control/limits` | 未开始 | |
@@ -49,7 +49,7 @@
 | 32 | `control/controller`（不含接触） | 未开始 | |
 | 33 | `ros/io` | 未开始 | |
 | 34 | `ros/controller` | 未开始 | |
-| — | M1 验收：遥控底盘时刷头误差 < 5 mm | 未开始 | |
+| — | M1 验收：遥控底盘时工具误差 < 5 mm | 未开始 | |
 
 ## M2 状态估计
 

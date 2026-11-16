@@ -3,12 +3,13 @@
 namespace T1::wbc
 {
 
-    void BaseTask::configure(const BaseTaskConfig& config)
+    void ChassisTask::configure(const ChassisTaskConfig& config)
     {
         config_ = config;
     }
 
-    void BaseTask::add_to(QpProblem& /*qp*/, const Reference& /*ref*/, const Pose2d& /*base_pose*/)
+    void ChassisTask::add_to(QpProblem& /*qp*/, const Reference& /*ref*/,
+                            const Pose2d& /*chassis_pose*/)
     {
         // TODO(M1)
     }

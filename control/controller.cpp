@@ -13,7 +13,7 @@ namespace T1::wbc
     {
         ee_task_.configure(config.ee);
         posture_task_.configure(config.posture);
-        base_task_.configure(config.base);
+        chassis_task_.configure(config.chassis_task);
         limits_.configure(config.limits);
         contact_.configure(config.contact);
         admittance_.configure(config.admittance);

@@ -26,7 +26,7 @@ namespace T1::wbc
 
         EeTaskConfig ee;
         PostureTaskConfig posture;
-        BaseTaskConfig base;
+        ChassisTaskConfig chassis_task;
         LimitsConfig limits;
         QpSolverConfig qp;
         CommandConfig command;

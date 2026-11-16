@@ -30,7 +30,7 @@ def blueprint():
         rrb.Horizontal(
             rrb.Spatial3DView(origin="/", name="机器人"),
             rrb.Vertical(
-                rrb.TimeSeriesView(origin="/plots/ee", name="刷头误差"),
+                rrb.TimeSeriesView(origin="/plots/ee", name="工具误差"),
                 rrb.TimeSeriesView(origin="/plots/base", name="底盘"),
                 rrb.TimeSeriesView(origin="/plots/force", name="力"),
                 rrb.TimeSeriesView(origin="/plots/timing", name="耗时 us"),

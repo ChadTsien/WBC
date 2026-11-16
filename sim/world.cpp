@@ -229,15 +229,15 @@ namespace T1::sim
         const double* pv = d->qvel + impl_->base_vadr;    // 线速度在世界，角速度在 base_link
 
         GroundTruth gt;
-        gt.base_pose.x = pq[0];
-        gt.base_pose.y = pq[1];
+        gt.chassis_pose.x = pq[0];
+        gt.chassis_pose.y = pq[1];
         const Eigen::Quaterniond quat(pq[3], pq[4], pq[5], pq[6]);   // wxyz
         const Mat3 R = quat.toRotationMatrix();
-        gt.base_pose.yaw = yaw_of(R);
+        gt.chassis_pose.yaw = yaw_of(R);
 
         const Vec3 v_world(pv[0], pv[1], pv[2]);
-        gt.base_twist.v = (R.transpose() * v_world).x();  // 沿 base_link +X
-        gt.base_twist.omega = pv[5];                      // 绕 base_link +Z
+        gt.chassis_twist.v = (R.transpose() * v_world).x();  // 沿 base_link +X
+        gt.chassis_twist.omega = pv[5];                      // 绕 base_link +Z
 
         const double* p = d->site_xpos + 3 * impl_->brush_site;
         const double* M = d->site_xmat + 9 * impl_->brush_site;

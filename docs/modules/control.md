@@ -20,7 +20,7 @@
 
 | 项 | 维度 | 作用 |
 |---|---|---|
-| 末端跟踪 | 5 | 刷头位置 + 轴线指向，权重最高 |
+| 末端跟踪 | 5 | 工具位置 + 轴线指向，权重最高 |
 | 姿态 | 6 | 让机械臂回到舒适构型；正因为有它，目标走远时底盘才会跟上 |
 | 底盘 | 2 | FREE：小正则（底盘是慢自由度）；TRACK_*：跟踪 |
 | 限位 | 盒约束 | 速度、加速度、位置 |
@@ -57,10 +57,10 @@
 - **里程碑** M1　**行数预算** ≤ 90
 
 ### include/t1_wbc/core/task_ee_tracking.hpp · src/core/task_ee_tracking.cpp
-- **职责**：刷头 5 维跟踪：位置 3 + 垂直于刷头轴线的 2 个角速度分量（绕轴线转动不约束）。
+- **职责**：工具 5 维跟踪：位置 3 + 垂直于工具轴线的 2 个角速度分量（绕轴线转动不约束）。
 - **实现要点**
   - 位置误差：`e_p = p_ref − p`。
-  - 轴线误差：设 `a = R.col(2)`、`a_ref = R_ref.col(2)`，`e_w = a × a_ref`；投影到刷头 x、y 轴：`e_ax = R.col(0)·e_w`，`e_ay = R.col(1)·e_w`。
+  - 轴线误差：设 `a = R.col(2)`、`a_ref = R_ref.col(2)`，`e_w = a × a_ref`；投影到工具 x、y 轴：`e_ax = R.col(0)·e_w`，`e_ay = R.col(1)·e_w`。
   - A 的 5 行：J 的前 3 行；`R.col(0)ᵀ J_ω`；`R.col(1)ᵀ J_ω`。
   - `b = v_ref + kp ⊙ e`，其中 kp 项先用 `saturate_norm` 限幅到 `max_error_rate`（位置、角度分别限）。参考角速度同样投影。
   - 用按行加权的 `add_cost`。
@@ -104,11 +104,11 @@
 - **里程碑** M3b　**行数预算** ≤ 70
 
 ### include/t1_wbc/core/admittance.hpp · src/core/admittance.cpp
-- **职责**：法向导纳（力跟踪）和倾斜导纳（让刷头贴平）。
+- **职责**：法向导纳（力跟踪）和倾斜导纳（让工具贴平）。
 - **实现要点**
   - 法向：`a = (F_meas − F_des − D v − K x) / M`；半隐式欧拉 `v += a dt`（夹到 `max_velocity`），`x += v dt`（夹到 `max_offset`，夹住时 v 清零）；返回 `offset = x · n`。
-  - 符号：x 沿 +n 为正。压力过大时 `F_meas > F_des`，x 增大，刷头后退。
-  - 倾斜：把接触力矩中垂直于刷头轴线的分量 `τ⊥ = τ − (τ·a)a` 积分为 `tilt += τ⊥ / tilt_damping · dt`，范数夹到 `max_tilt`。
+  - 符号：x 沿 +n 为正。压力过大时 `F_meas > F_des`，x 增大，工具后退。
+  - 倾斜：把接触力矩中垂直于工具轴线的分量 `τ⊥ = τ − (τ·a)a` 积分为 `tilt += τ⊥ / tilt_damping · dt`，范数夹到 `max_tilt`。
 - **测试要点**：K = 0 时，对一个虚拟弹簧墙（F = k·穿透量）闭环仿真，F 收敛到 F_des 且无振荡；`reset` 后 offset 为 0；offset 不超过上限。
 - **里程碑** M3b　**行数预算** ≤ 60
 
@@ -127,16 +127,16 @@
 ### include/t1_wbc/core/wbc_controller.hpp · src/core/wbc_controller.cpp
 - **职责**：一个控制周期的全部计算。构造和 `reset` 已写好。
 - **`update` 步骤**
-  1. `kinematics_.update(q)`，取 `tool_in_base`、刷头雅可比、可操作度。
-  2. `ee_world = base_pose ⊗ tool_in_base`。
+  1. `kinematics_.update(q)`，取 `tool_in_base`、工具雅可比、可操作度。
+  2. `ee_world = chassis_pose ⊗ tool_in_base`。
   3. `contact_.update(...)` 得到法向的力或速度参考。
-  4. 若使用导纳：`admittance_.update_normal/update_tilt`，修正参考的刷头位置和轴线；接近或抬起阶段改为修正参考速度。
+  4. 若使用导纳：`admittance_.update_normal/update_tilt`，修正参考的工具位置和轴线；接近或抬起阶段改为修正参考速度。
   5. `whole_body_jacobian(...)`。
   6. `qp_.reset()`，依次加入末端、姿态、底盘任务，`limits_.apply`。
   7. `solver_.solve`；失败时 x = 0（保持不动），并记录状态。
   8. `dynamics_.gravity_torque(q, gravity_in_base)`。
   9. `command_.build(...)`，`chassis_.to_wheels(...)`；更新 `x_prev_`，填写 Output。
-- **验收（M1 闭环运动学测试）**：写一个不依赖 ROS 的测试：用"理想执行"（q += dq·dt，底盘按差速模型积分）闭环 10 s，参考为匀速移动的刷头目标，刷头误差 < 5 mm；目标走到机械臂够不着的地方时底盘自动跟随。
+- **验收（M1 闭环运动学测试）**：写一个不依赖 ROS 的测试：用"理想执行"（q += dq·dt，底盘按差速模型积分）闭环 10 s，参考为匀速移动的工具目标，工具误差 < 5 mm；目标走到机械臂够不着的地方时底盘自动跟随。
 - **里程碑** M1（M3b 加接触）　**行数预算** ≤ 150
 
 ### include/t1_wbc/ros/wbc_ros_io.hpp · src/ros/wbc_ros_io.cpp
@@ -162,15 +162,15 @@
     - 状态：每个关节位置、速度、力矩，每个轮子位置、速度，IMU 10 个，力传感器 6 个。
     - 下标辅助函数依赖这个顺序。
   - `on_configure`：`load_wbc_config`，`fetch_robot_description` 后构造 `ArmModel`，接着构造 WBC、里程计、EKF、力补偿和 io。所有分配都在这里完成。
-  - `on_activate`：读当前状态，`odometry_->reset`，`ekf_.reset`，`wbc_->reset`；`hold_reference_` 设为当前刷头位姿。
+  - `on_activate`：读当前状态，`odometry_->reset`，`ekf_.reset`，`wbc_->reset`；`hold_reference_` 设为当前工具位姿。
   - `update`：
-    1. 处理换刷头（`set_tool_payload` 和补偿器参数）和标零请求；
+    1. 处理换工具（`set_tool_payload` 和补偿器参数）和标零请求；
     2. `read_state`：里程计 → EKF（预测、里程计更新、陀螺仪更新）→ 倾角 → 力补偿 → 转到世界系 → 接触检测；
     3. `current_reference`：有轨迹就按时间采样，有遥控就覆盖底盘模式，都没有就用 `hold_reference_`；
     4. `wbc_->update`；
-    5. 刷头脱落或 QP 连续失败时 `write_hold`，否则 `write_command`；
+    5. 工具脱落或 QP 连续失败时 `write_hold`，否则 `write_command`；
     6. `io_.publish`。
-- **验收**：`ros2 launch t1_bringup sim.launch.py` 后向 `/wbc_controller/cmd_vel` 发遥控速度，刷头在世界系中保持不动（M1 验收）。
+- **验收**：`ros2 launch t1_bringup sim.launch.py` 后向 `/wbc_controller/cmd_vel` 发遥控速度，工具在世界系中保持不动（M1 验收）。
 - **里程碑** M1　**行数预算** ≤ 250
 
 ### config/wbc.yaml

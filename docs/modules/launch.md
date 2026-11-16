@@ -16,7 +16,7 @@
 - **状态**：完成。M0 阶段仿真插件实现后即可启动。
 
 ### tools/rerun_view.py
-- **职责**：订阅状态、接触、力、关节、里程计和 tf，记进 Rerun。三维视图看坐标系，时间序列看刷头误差、底盘速度、力和 QP 耗时。
+- **职责**：订阅状态、接触、力、关节、里程计和 tf，记进 Rerun。三维视图看坐标系，时间序列看工具误差、底盘速度、力和 QP 耗时。
 - **不在** `WbcRosController::update` 里调用。控制线程只发布话题。
 - **用法**：`ros2 launch wbc sim.launch.py`，或单独 `ros2 run wbc rerun_view.py --save bags/run.rrd`。
 - **状态**：完成。
@@ -29,4 +29,4 @@
 ### 计划中
 - `launch/real.launch.py`（M8）：同 sim，换成 `use_sim:=false` 并加载 `motors.yaml`；启动雷达、深度相机驱动。
 - `launch/nav.launch.py`（M4）：Nav2 + 定位。
-- `config/foxglove_layout.json`（M0 之后随时）：保存常用面板布局：刷头误差、QP 耗时、法向力、底盘速度。
+- `config/foxglove_layout.json`（M0 之后随时）：保存常用面板布局：工具误差、QP 耗时、法向力、底盘速度。

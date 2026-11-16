@@ -15,7 +15,7 @@
 | 4 | 轮距 0.406（URDF）与 0.402（旧仿真）不一致 | `chassis.yaml`，实测后修改 |
 | 5 | 车头朝 +Y，根坐标系离地约 0.16 m | 已由 `v6_wbc.urdf` 解决：`chassis_link` 为 +X 朝前；`chassis_joint` 只平移 |
 | 6 | 关节/连杆名为数字，网格路径混用两个包名 | 所有 xacro 用新名字；网格统一为 `package://wbc/meshes/raw/` |
-| 7 | 缺少力传感器、刷头 | `end_effector.xacro`：`ft_sensor`、`brush_mount`、`brush_tip` |
+| 7 | 缺少力传感器、工具 | `end_effector.xacro`：`ft_sensor`、`brush_mount`、`brush_tip` |
 
 另外两件事：碰撞体用简化几何体（放在 `meshes/collision/`，或直接用 box/cylinder/capsule），显示仍用原始网格；车身质量 50 kg 是整数，待称重。
 
@@ -50,7 +50,7 @@
 
 ### urdf/end_effector.xacro
 - **职责**：`tool_link → ft_sensor → brush_mount → brush_tip`，全部 fixed。
-- **实现要点**：`ft_sensor` 是测量坐标系（按传感器手册定义原点和轴向）；`brush_tip` 在刷面中心，z 轴指向刷面外侧；刷头的质量和惯量挂在 `brush_mount` 上（用圆柱公式估算）。
+- **实现要点**：`ft_sensor` 是测量坐标系（按传感器手册定义原点和轴向）；`brush_tip` 在工作面中心，z 轴指向工作面外侧；工具的质量和惯量挂在 `brush_mount` 上（用圆柱公式估算）。
 - **里程碑** M0
 
 ### urdf/ros2_control.xacro

@@ -1,6 +1,10 @@
 # Source in every terminal (or from ~/.bashrc):
 #   source scripts/env.sh
 #
+# After sourcing, from any directory:
+#   t1b && t1t test_reference   # build, then one gtest (-R = ament_add_gtest name)
+#   t1b && t1t                  # build, then all package tests
+#
 # Order matters: ROS first, then /opt/openrobots prepended, so Pinocchio 2.7 /
 # hpp-fcl 2.4.4 shadow ros-humble-pinocchio (3.x) both at build and run time.
 
@@ -34,3 +38,16 @@ fi
 
 export T1_ROOT="${_T1_ROOT}"
 unset _T1_ROOT
+
+t1b() {
+    (cd "${T1_ROOT}" && colcon build --packages-select wbc "$@")
+}
+
+t1t() {
+    local extra=()
+    if [[ -n "${1:-}" ]]; then
+        extra=(--ctest-args -R "$1")
+    fi
+    (cd "${T1_ROOT}" && colcon test --packages-select wbc \
+        --event-handlers console_direct+ "${extra[@]}")
+}

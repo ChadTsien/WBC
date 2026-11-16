@@ -30,9 +30,9 @@ TEST(MujocoWorld, GravitySagsArmChassisStill)
     const T1::ArmVec q1 = world.arm_state().q;
     EXPECT_GT((q1 - q0).norm(), 1e-3);
     const T1::sim::GroundTruth gt = world.ground_truth();
-    EXPECT_NEAR(gt.base_pose.x, 0.0, 5e-3);
-    EXPECT_NEAR(gt.base_pose.y, 0.0, 5e-3);
-    EXPECT_NEAR(gt.base_pose.yaw, 0.0, 5e-3);
+    EXPECT_NEAR(gt.chassis_pose.x, 0.0, 5e-3);
+    EXPECT_NEAR(gt.chassis_pose.y, 0.0, 5e-3);
+    EXPECT_NEAR(gt.chassis_pose.yaw, 0.0, 5e-3);
 }
 
 TEST(MujocoWorld, Joint1TracksSetpoint)
@@ -68,8 +68,8 @@ TEST(MujocoWorld, EqualWheelsDriveForward)
         world.step();
     }
     const T1::sim::GroundTruth gt = world.ground_truth();
-    EXPECT_GT(gt.base_pose.x, 0.9);
-    EXPECT_NEAR(gt.base_pose.yaw, 0.0, 0.1);
+    EXPECT_GT(gt.chassis_pose.x, 0.9);
+    EXPECT_NEAR(gt.chassis_pose.yaw, 0.0, 0.1);
 }
 
 TEST(MujocoWorld, ImuAtRest)

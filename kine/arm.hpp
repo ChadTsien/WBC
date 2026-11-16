@@ -41,7 +41,7 @@ namespace T1
             Iso3 ft_pose() const;
 
             /**
-            * 刷头在臂座（arm_base_link / arm_mount_joint）下的位姿
+            * 工具在臂座（arm_base_link / arm_mount_joint）下的位姿
             *
             * 说明
             * - T_mount_tip = T_base_mount⁻¹ · T_base_tip
@@ -64,7 +64,7 @@ namespace T1
              * 5 维任务可操作度 sqrt(det(J Jᵀ))
              *
              * 说明
-             * - J = [Jv; u1ᵀ Jw; u2ᵀ Jw]，u1/u2 是刷头系 x、y 轴（垂直刷头轴线）
+             * - J = [Jv; u1ᵀ Jw; u2ᵀ Jw]，u1/u2 是工具系 x、y 轴（垂直工具轴线）
              * - 须先 update(q)
              */
             double manipulability() const;

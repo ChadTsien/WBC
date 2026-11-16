@@ -16,7 +16,7 @@ namespace T1
      * - urdf_xml：展开后的 URDF；来自测试文件，或 robot_state_publisher 的
      *   robot_description 参数
      * - arm_joints：保留的 6 个关节，顺序即 ArmVec 下标
-     * - tool_frame / ft_frame：刷头、力传感器坐标系名
+     * - tool_frame / ft_frame：工具、力传感器坐标系名
      * - mount_frame：臂座，arm_mount_joint 的子连杆，默认 arm_base_link
      */
     struct ArmModelConfig

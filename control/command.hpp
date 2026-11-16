@@ -31,7 +31,7 @@ namespace T1::wbc
 
         MitCommand build(const WbcVec& x, const ArmVec& q_measured, const ArmVec& tau_gravity,
                          bool contact_gains, double dt);
-        static ChassisTwist base_twist(const WbcVec& x) { return ChassisTwist{x[0], x[1]}; }
+        static ChassisTwist chassis_twist(const WbcVec& x) { return ChassisTwist{x[0], x[1]}; }
 
         private:
         CommandConfig config_;

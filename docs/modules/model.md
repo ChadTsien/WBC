@@ -29,9 +29,9 @@ Pinocchio 2.7 的封装，提供机械臂运动学、动力学和差速底盘运
 - **实现要点**
   - `update`：`forwardKinematics` → `updateFramePlacements` → `computeJointJacobians`。
   - `frame_pose`：`data.oMf[id]` 转成 `Iso3`（`translation()` 和 `rotation()`）。
-  - `tool_pose_in_mount`：`T_mount⁻¹ · T_tip`，刷头在 `arm_base_link` 下。
+  - `tool_pose_in_mount`：`T_mount⁻¹ · T_tip`，工具在 `arm_base_link` 下。
   - `frame_jacobian`：`getFrameJacobian(model, data, id, LOCAL_WORLD_ALIGNED, J)`。这里的 "WORLD" 指 Pinocchio 模型的根，也就是 base_link；前 3 行线速度，后 3 行角速度。
-  - `manipulability`：取刷头坐标系的 x、y 轴 `u1`、`u2`（都垂直于刷头轴线），组成 5×6 矩阵 `[Jv; u1ᵀJw; u2ᵀJw]`，返回 `sqrt(det(J Jᵀ))`。
+  - `manipulability`：取工具坐标系的 x、y 轴 `u1`、`u2`（都垂直于工具轴线），组成 5×6 矩阵 `[Jv; u1ᵀJw; u2ᵀJw]`，返回 `sqrt(det(J Jᵀ))`。
 - **测试要点**
   - 数值雅可比：随机 q，每个关节扰动 1e-6，位置差分和 `log3(R0ᵀR1)` 差分，与解析雅可比的误差 < 1e-5。
   - 零位时 `brush_tip` 的位置与手算（或 RViz 读数）一致。
@@ -49,18 +49,18 @@ Pinocchio 2.7 的封装，提供机械臂运动学、动力学和差速底盘运
 - **里程碑** M0（互转），M1（雅可比）　**行数预算** ≤ 60
 
 ### include/t1_model/whole_body_jacobian.hpp · src/whole_body_jacobian.cpp
-- **职责**：刷头在世界系下的 6 维速度对 `[v, ω, dq1..dq6]` 的 6×8 雅可比。
+- **职责**：工具在世界系下的 6 维速度对 `[v, ω, dq1..dq6]` 的 6×8 雅可比。
 - **实现要点**
-  - 前 2 列：`base.point_jacobian(tool_in_base.translation(), base_pose.yaw)`；
+  - 前 2 列：`chassis.point_jacobian(tool_in_base.translation(), chassis_pose.yaw)`；
   - 后 6 列：`blockdiag(R, R) · arm_jacobian`，其中 `R = Rz(yaw)`，把 base_link 坐标轴转到世界坐标轴。
-- **测试要点**：随机底盘位姿、关节角和输入 x；把状态按 x 推进一个很小的 dt（底盘按差速模型积分，关节 q += dq·dt），用新旧刷头位姿的差分验证 `J·x`，误差 < 1e-5。**这是整个 WBC 最关键的一个测试。**
+- **测试要点**：随机底盘位姿、关节角和输入 x；把状态按 x 推进一个很小的 dt（底盘按差速模型积分，关节 q += dq·dt），用新旧工具位姿的差分验证 `J·x`，误差 < 1e-5。**这是整个 WBC 最关键的一个测试。**
 - **里程碑** M1　**行数预算** ≤ 40
 
 ### include/t1_model/dynamics.hpp · src/dynamics.cpp
-- **职责**：MIT 前馈用的重力矩；刷头负载并入最后一个连杆。
+- **职责**：MIT 前馈用的重力矩；工具负载并入最后一个连杆。
 - **实现要点**
   - 构造时保存 `model.inertias[最后一个关节]` 的原始值。
-  - `set_tool_payload`：用 `model.frames[ft_frame].placement` 把负载 `pinocchio::Inertia(mass, com, 质点惯量)` 变换到关节坐标系，再与**原始值**相加（不能在当前值上累加，否则每换一次刷头就重复叠加）。
+  - `set_tool_payload`：用 `model.frames[ft_frame].placement` 把负载 `pinocchio::Inertia(mass, com, 质点惯量)` 变换到关节坐标系，再与**原始值**相加（不能在当前值上累加，否则每换一次工具就重复叠加）。
   - `gravity_torque`：`model.gravity.linear(gravity_in_base)`，然后 `computeGeneralizedGravity(model, data, q)`。
 - **测试要点**：水平地面上 J1、J2、J4 的重力矩 ≈ 0；把负载设为 m 后，J6 重力矩的增量 ≈ `m·g·水平力臂`；把重力方向倾斜 10°，J1 的重力矩变为非零。
 - **里程碑** M3a（负载），M3b（重力矩用于 MIT 前馈）　**行数预算** ≤ 70

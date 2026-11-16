@@ -11,7 +11,7 @@ namespace T1::wbc
 
     // One control cycle, ROS-free and allocation-free after construction:
     //   kinematics -> contact phase + admittance (modify reference) -> tasks & limits -> QP
-    //   -> MIT command + base twist + wheel speeds
+    //   -> MIT command + chassis twist + wheel speeds
     class WbcController
     {
         public:
@@ -32,7 +32,7 @@ namespace T1::wbc
 
         EeTrackingTask ee_task_;
         PostureTask posture_task_;
-        BaseTask base_task_;
+        ChassisTask chassis_task_;
         LimitConstraints limits_;
         ContactPhaseManager contact_;
         Admittance admittance_;
