@@ -73,7 +73,7 @@
 - **测试要点**：只有这一个任务时，解的关节部分等于 b，底盘部分为 0（需另加正则）。
 - **里程碑** M1　**行数预算** ≤ 30
 
-### include/t1_wbc/core/task_base.hpp · src/core/task_base.cpp
+### include/t1_wbc/core/task_chassis.hpp · src/core/task_chassis.cpp
 - **职责**：按模式给底盘加代价。
 - **实现要点**
   - kFree：`A = [I₂ | 0]`，`b = 0`，权重 `regularization`。

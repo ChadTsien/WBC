@@ -40,13 +40,13 @@
 | 23 | `control/qp_problem` | 完成 | 2026-11-16 |
 | 24 | `control/qp_solver` | 完成 | 2026-11-16 |
 | 25 | `control/reference` | 完成 | 2026-11-16 |
-| 26 | `control/task_ee` | 进行中 | 2026-11-16 |
-| 27 | `control/task_posture` | 未开始 | |
-| 28 | `control/task_base` | 未开始 | |
-| 29 | `control/limits` | 未开始 | |
-| 30 | `control/command` | 未开始 | |
-| 31 | `control/config` | 未开始 | |
-| 32 | `control/controller`（不含接触） | 未开始 | |
+| 26 | `control/task_ee` | 完成 | 2026-11-17 |
+| 27 | `control/task_posture` | 完成 | 2026-11-17 |
+| 28 | `control/task_chassis` | 完成 | 2026-11-17 |
+| 29 | `control/limits` | 完成 | 2026-11-17 |
+| 30 | `control/command` | 完成 | 2026-11-17 |
+| 31 | `control/config` | 完成 | 2026-11-17 |
+| 32 | `control/controller`（不含接触） | 完成 | 2026-11-17 |
 | 33 | `ros/io` | 未开始 | |
 | 34 | `ros/controller` | 未开始 | |
 | — | M1 验收：遥控底盘时工具误差 < 5 mm | 未开始 | |

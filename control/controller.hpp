@@ -9,38 +9,51 @@
 namespace T1::wbc
 {
 
-    // One control cycle, ROS-free and allocation-free after construction:
-    //   kinematics -> contact phase + admittance (modify reference) -> tasks & limits -> QP
-    //   -> MIT command + chassis twist + wheel speeds
+    /**
+     * 一个控制周期：运动学 → 任务与限位 → QP → MIT + 轮速
+     *
+     * 说明
+     * - 构造后不再分配
+     * - M1 不改参考、不用导纳；contact_gains 固定 false
+     */
     class WbcController
     {
         public:
-        WbcController(const WbcConfig& config, ArmModel& model);
+            WbcController(const WbcConfig& config, ArmModel& model);
 
-        // Call on activation: holds the current pose, clears integrators and warm start.
-        void reset(const RobotState& state);
-        Output update(const RobotState& state, const Reference& ref, double dt);
+            /** 使能时调用：积分器、接触、导纳清零，q_des 对齐实测 */
+            void reset(const RobotState& state);
 
-        // Call from the control thread between update() calls (shares the model). No allocation.
-        void set_tool_payload(double mass, const Vec3& com_in_ft);
+            /**
+             * 算一拍指令
+             *
+             * 参数
+             * - state：关节、底盘位姿、重力
+             * - ref：工具位姿 / 底盘模式，odom
+             * - dt：控制周期，s
+             */
+            Output update(const RobotState& state, const Reference& ref, double dt);
+
+            /** 换工具时改负载；与 update 不同时调，共用 ArmModel */
+            void set_tool_payload(double mass, const Vec3& com_in_ft);
 
         private:
-        WbcConfig config_;
-        ArmKinematics kinematics_;
-        Dynamics dynamics_;
-        ChassisModel chassis_;
+            WbcConfig config_;
+            ArmKinematics kinematics_;
+            Dynamics dynamics_;
+            ChassisModel chassis_;
 
-        EeTrackingTask ee_task_;
-        PostureTask posture_task_;
-        ChassisTask chassis_task_;
-        LimitConstraints limits_;
-        ContactPhaseManager contact_;
-        Admittance admittance_;
-        QpProblem qp_;
-        QpSolver solver_;
-        CommandBuilder command_;
+            EeTrackingTask ee_task_;
+            PostureTask posture_task_;
+            ChassisTask chassis_task_;
+            LimitConstraints limits_;
+            ContactPhaseManager contact_;
+            Admittance admittance_;
+            QpProblem qp_;
+            QpSolver solver_;
+            CommandBuilder command_;
 
-        WbcVec x_prev_ = WbcVec::Zero();
+            WbcVec x_prev_ = WbcVec::Zero();
     };
 
 }  // namespace T1::wbc
