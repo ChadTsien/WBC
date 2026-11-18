@@ -62,7 +62,7 @@
   - 位置误差：`e_p = p_ref − p`。
   - 轴线误差：设 `a = R.col(2)`、`a_ref = R_ref.col(2)`，`e_w = a × a_ref`；投影到工具 x、y 轴：`e_ax = R.col(0)·e_w`，`e_ay = R.col(1)·e_w`。
   - A 的 5 行：J 的前 3 行；`R.col(0)ᵀ J_ω`；`R.col(1)ᵀ J_ω`。
-  - `b = v_ref + kp ⊙ e`，其中 kp 项先用 `saturate_norm` 限幅到 `max_error_rate`（位置、角度分别限）。参考角速度同样投影。
+  - `b = v_ref + kp ⊙ e − kd ⊙ (A x_meas − v_ref)`，其中 kp 项先用 `saturate_norm` 限幅到 `max_error_rate`（位置、角度分别限）。参考角速度同样投影。`x_meas` 是当前 `[v, ω, dq]`。hold 时 v_ref=0，等价于 −kd ⊙ v_meas。
   - 用按行加权的 `add_cost`。
 - **测试要点**：零误差、零参考速度时 b = 0；纯绕轴线的旋转误差 → 轴线误差为 0；轴线偏 0.1 rad → 误差范数 ≈ 0.1。
 - **里程碑** M1　**行数预算** ≤ 70
@@ -162,7 +162,7 @@
     - 状态：每个关节位置、速度、力矩，每个轮子位置、速度，IMU 10 个，力传感器 6 个。
     - 下标辅助函数依赖这个顺序。
   - `on_configure`：`load_wbc_config`，`fetch_robot_description` 后构造 `ArmModel`，接着构造 WBC、里程计、EKF、力补偿和 io。所有分配都在这里完成。
-  - `on_activate`：读当前状态，`odometry_->reset`，`ekf_.reset`，`wbc_->reset`；`hold_reference_` 设为当前工具位姿。
+  - `on_activate`：读当前状态，`odometry_->reset`，`ekf_.reset`，`wbc_->reset`；`hold_reference_` 设为当前工具位姿，底盘 `kTrackPose`（kFree 只约束速度，拦不住臂摆反力）。
   - `update`：
     1. 处理换工具（`set_tool_payload` 和补偿器参数）和标零请求；
     2. `read_state`：里程计 → EKF（预测、里程计更新、陀螺仪更新）→ 倾角 → 力补偿 → 转到世界系 → 接触检测；

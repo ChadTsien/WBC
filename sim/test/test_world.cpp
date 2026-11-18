@@ -18,6 +18,18 @@ namespace
     }
 }
 
+TEST(MujocoWorld, ResetAppliesHomeQ)
+{
+    T1::sim::WorldConfig cfg = make_cfg();
+    cfg.q_home << 0.0, 1.0, 0.0, 0.0, -1.5, 0.0;
+    T1::sim::MujocoWorld world(cfg);
+    world.reset();
+    const T1::ArmVec q = world.arm_state().q;
+    EXPECT_NEAR(q[1], 1.0, 1e-9);
+    EXPECT_NEAR(q[4], -1.5, 1e-9);
+    EXPECT_GT(world.ground_truth().tool_pose_world.translation().z(), 0.40);
+}
+
 TEST(MujocoWorld, GravitySagsArmChassisStill)
 {
     T1::sim::MujocoWorld world(make_cfg());

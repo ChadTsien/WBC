@@ -1,16 +1,16 @@
 # One sample of the whole-body reference. Time is relative to TaskSpaceTrajectory.header.stamp.
 builtin_interfaces/Duration time_from_start
 
-# Base reference, world frame (header.frame_id of the trajectory).
-uint8 BASE_FREE = 0
-uint8 BASE_TRACK_POSE = 1
-uint8 BASE_TRACK_TWIST = 2
-uint8 base_mode
-float64 base_x
-float64 base_y
-float64 base_yaw
-float64 base_v
-float64 base_omega
+# Chassis reference, world frame (header.frame_id of the trajectory).
+uint8 CHASSIS_FREE = 0
+uint8 CHASSIS_TRACK_POSE = 1
+uint8 CHASSIS_TRACK_TWIST = 2
+uint8 chassis_mode
+float64 chassis_x
+float64 chassis_y
+float64 chassis_yaw
+float64 chassis_v
+float64 chassis_omega
 
 # brush_tip reference, world frame. Roll about the brush axis is ignored (5-DoF task).
 geometry_msgs/Pose ee_pose

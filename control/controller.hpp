@@ -37,6 +37,14 @@ namespace T1::wbc
             /** 换工具时改负载；与 update 不同时调，共用 ArmModel */
             void set_tool_payload(double mass, const Vec3& com_in_ft);
 
+            /**
+             * 当前构型的重力矩，给 write_hold / MIT tau_ff
+             *
+             * 说明
+             * - 与 update 里用的是同一套 Dynamics
+             */
+            ArmVec gravity_torque(const ArmVec& q, const Vec3& gravity_in_base);
+
         private:
             WbcConfig config_;
             ArmKinematics kinematics_;

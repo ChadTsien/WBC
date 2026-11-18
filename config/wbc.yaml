@@ -1,20 +1,21 @@
 # Loaded by load_wbc_config(). Arm vectors are in arm_joint1..6 order.
 # Units: m, rad, s, N, Nm, kg. Values are starting points for tuning in simulation.
 control_rate_hz: 500.0
-max_inequality_rows: 64
+max_inequality_rows: 0
 
 ee_task:
   kp: [5.0, 5.0, 5.0, 5.0, 5.0]
+  kd: [0.5, 0.5, 0.5, 0.3, 0.3]
   weight: [1000.0, 1000.0, 1000.0, 300.0, 300.0]
-  max_error_rate: 0.5
+  max_error_rate: 0.3
 
 posture_task:
-  q_nominal: [0.0, 1.0, 0.0, 0.0, -1.5, 0.0]   # placeholder until the model is cleaned up
-  weight: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+  q_nominal: [0.0, 1.0, 0.0, 0.0, -1.5, 0.0]   # keep in sync with sim.yaml physics.home_q
+  weight: [5.0, 5.0, 5.0, 5.0, 5.0, 5.0]
   kp: 1.0
 
 chassis_task:
-  regularization: 10.0
+  regularization: 5000.0
   track_weight: 10000.0
   kp_position: 1.0
   kp_yaw: 1.5
@@ -33,16 +34,16 @@ limits:
 
 qp:
   max_iterations: 100
-  eps_abs: 1.0e-6
+  eps_abs: 1.0e-4
   warm_start: true
 
 command:
   free_motion:
-    kp: [30.0, 30.0, 2000.0, 10.0, 20.0, 10.0]
-    kd: [1.0, 1.0, 50.0, 0.3, 0.6, 0.3]
+    kp: [30.0, 30.0, 200.0, 10.0, 20.0, 10.0]
+    kd: [5.0, 3.0, 20.0, 0.3, 0.6, 0.3]
   contact:
-    kp: [20.0, 20.0, 2000.0, 5.0, 10.0, 5.0]
-    kd: [1.0, 1.0, 50.0, 0.3, 0.6, 0.3]
+    kp: [20.0, 20.0, 200.0, 5.0, 10.0, 5.0]
+    kd: [5.0, 3.0, 20.0, 0.3, 0.6, 0.3]
   max_tracking_error: 0.1
 
 contact:

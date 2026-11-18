@@ -52,6 +52,7 @@ namespace T1
             ArmModel(const ArmModel&) = delete;
             ArmModel& operator=(const ArmModel&) = delete;
 
+            pinocchio::Model& model();
             const pinocchio::Model& model() const;
             pinocchio::Data& data();
 

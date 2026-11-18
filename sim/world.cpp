@@ -117,6 +117,10 @@ namespace T1::sim
     {
         std::lock_guard<std::mutex> lock(impl_->mutex);
         mj_resetData(impl_->model, impl_->data);
+        for (int i = 0; i < kNumArmJoints; ++i)
+        {
+            impl_->data->qpos[impl_->arm_qadr[i]] = impl_->config.q_home[i];
+        }
         mj_forward(impl_->model, impl_->data);       // 填 xpos / site，否则 ground_truth 是空的
     }
 

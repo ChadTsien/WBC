@@ -90,6 +90,11 @@ namespace T1
 
     ArmModel::~ArmModel() = default;
 
+    pinocchio::Model& ArmModel::model()
+    {
+        return impl_->model;
+    }
+
     const pinocchio::Model& ArmModel::model() const
     {
         return impl_->model;

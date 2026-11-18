@@ -9,8 +9,8 @@ target_defaults(sim_system)
 add_library(wbc_controller SHARED controller.cpp io.cpp)
 target_link_libraries(wbc_controller PUBLIC control "${cpp_typesupport_target}")
 ament_target_dependencies(wbc_controller PUBLIC
-  controller_interface hardware_interface pluginlib rclcpp rclcpp_lifecycle
-  realtime_tools geometry_msgs nav_msgs tf2_msgs)
+  ament_index_cpp controller_interface hardware_interface pluginlib rclcpp
+  rclcpp_lifecycle realtime_tools geometry_msgs nav_msgs tf2_msgs)
 target_defaults(wbc_controller)
 
 add_executable(ft_calibration ft_calibration.cpp ft_calibration_main.cpp)

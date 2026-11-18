@@ -25,6 +25,7 @@ MuJoCo 仿真，以 ros2_control 硬件插件的形式接入。控制器看到�
     - 然后 `mj_step`，整个过程加锁。
   - 传感器读取用 `sensordata[adr..adr+n)`。MuJoCo 的 `force`/`torque` 传感器给出的是"子体作用在父体上"的力，符号和坐标系要对照力传感器手册定义，必要时取反。
   - `imu_linear_acceleration` 用 `accelerometer` 传感器（含重力反作用，与真实 IMU 一致）。
+  - `reset()`：`mj_resetData` 后把臂关节写成 `q_home`（与 `wbc.yaml` 的 `q_nominal` 一致，避免全零奇异）。
   - `ground_truth`：从底盘的 freejoint `qpos` 解算 x、y、yaw，从 site 的 `xpos`/`xmat` 得到工具位姿。
 - **测试要点**（需要生成好的 MJCF）
   - 零力矩下机械臂受重力下垂，底盘静止不动。
@@ -53,13 +54,13 @@ MuJoCo 仿真，以 ros2_control 硬件插件的形式接入。控制器看到�
 - **职责**：`t1_sim/T1SimSystem` 插件；参数来自 `ros2_control.xacro` 中的 `<param>`。
 - **实现要点**
   - `on_init`：
-    - 读取 `mjcf_path` 和 `sim_config`（sim.yaml）；
+    - 读取 `mjcf_path` 和 `sim_config`（sim.yaml，含 `physics.home_q`）；
     - 校验 `info.joints` 共 8 个，接口名和顺序与 xacro 一致；
     - 构造 world 和噪声模型，按大小分配所有存储向量。
   - `export_*_interfaces`：按 `info.joints` 的顺序，把存储向量元素的地址交出去。传感器按 `info.sensors` 的名字（`imu`、`ft_sensor`）导出，接口名用标准名字（`orientation.x`、`force.x` 等）。
-  - `on_activate`：先读一次状态；把位置指令设为当前位置、刚度设为 0（激活瞬间不跳）。
-  - `read`：推进 `n = round(period / timestep)` 步，然后把状态和传感器（加噪声后）写入存储。
-  - `write`：把指令存储打包成 `MitCommand` 和 `WheelSpeeds` 交给 world；NaN 当作 0 处理。
+  - `on_activate`：先读一次状态；把位置指令设为当前位置、刚度设为 0（激活瞬间不跳）。`physics_armed_` 清零。
+  - `read`：仅当 `physics_armed_` 时推进 `n = round(period / timestep)` 步（WBC spawn 空窗 kp=0，步进会让 J3 自由落体贴地），然后把状态和传感器（加噪声后）写入存储。
+  - `write`：把指令存储打包成 `MitCommand` 和 `WheelSpeeds` 交给 world；NaN 当作 0 处理。任一臂关节 `kp > 0` 后置位 `physics_armed_`。
   - 在 cpp 末尾 `PLUGINLIB_EXPORT_CLASS`（已写好）。
 - **验收**：`ros2 launch t1_bringup sim.launch.py wbc:=false` 后，`ros2 control list_hardware_interfaces` 列出全部接口；`/joint_states` 为 500 Hz。
 - **里程碑** M0　**行数预算** ≤ 200

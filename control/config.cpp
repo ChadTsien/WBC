@@ -30,6 +30,7 @@ namespace
     {
         EeTaskConfig c;
         c.kp = require_vector(n, "kp", kTaskDim);
+        c.kd = require_vector(n, "kd", kTaskDim);
         c.weight = require_vector(n, "weight", kTaskDim);
         c.max_error_rate = require<double>(n, "max_error_rate");
         return c;
@@ -164,6 +165,8 @@ namespace
         c.limits = load_limits(child(root, "limits"));
         c.qp = load_qp(child(root, "qp"));
         c.command = load_command(child(root, "command"));
+        c.command.q_min = c.limits.q_min;
+        c.command.q_max = c.limits.q_max;
         c.contact = load_contact(child(root, "contact"));
         c.admittance = load_admittance(child(root, "admittance"));
         c.chassis = load_chassis(child(root, "chassis"));

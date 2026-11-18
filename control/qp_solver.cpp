@@ -2,9 +2,6 @@
 #include "control/types.hpp"
 #include "types/types.hpp"
 
-#include <Eigen/src/Core/Matrix.h>
-#include <Eigen/src/Core/util/Constants.h>
-
 #include <algorithm>
 #include <proxsuite/proxqp/dense/dense.hpp>
 #include <proxsuite/proxqp/dense/wrapper.hpp>
@@ -15,8 +12,20 @@ namespace T1::wbc
     namespace
     {
         constexpr double kBoundInf = 1e20;
-        using ProxMat = 
-            Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
+        using ProxMat =
+            Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::ColMajor>;
+
+        void set_timing(int* iterations, double* solve_time_us, int iter, double us)
+        {
+            if (iterations != nullptr)
+            {
+                *iterations = iter;
+            }
+            if (solve_time_us != nullptr)
+            {
+                *solve_time_us = us;
+            }
+        }
 
         QpStatus map_status(proxsuite::proxqp::QPSolverOutput status)
         {
@@ -59,6 +68,7 @@ namespace T1::wbc
               c_hi(VecX::Constant(std::max(rows, 0), kBoundInf))
         {
             qp.settings.max_iter = cfg.max_iterations;
+            qp.settings.max_iter_in = std::max(cfg.max_iterations, 32);
             qp.settings.eps_abs = cfg.eps_abs;
             qp.settings.verbose = false;
             qp.settings.compute_timings = true;
@@ -79,8 +89,11 @@ namespace T1::wbc
     QpStatus QpSolver::solve(const QpProblem& problem, WbcVec* x, int* iterations,
                              double* solve_time_us)
     {
-        if ((problem.x_lower().array() > problem.x_upper().array()).any())
+        if ((problem.x_lower().array() > problem.x_upper().array()).any()
+            || problem.x_lower().hasNaN() || problem.x_upper().hasNaN()
+            || !problem.H().allFinite() || !problem.g().allFinite())
         {
+            set_timing(iterations, solve_time_us, 0, 0.0);
             return QpStatus::kInfeasible;
         }
 
@@ -105,6 +118,8 @@ namespace T1::wbc
 
         auto& qp = impl_->qp;
         const bool has_in = impl_->max_rows > 0;
+        // Recompute Ruiz every cycle: H changes with q, and KEEP after a bad
+        // first init leaves NaN scales that never recover.
         if (!impl_->initialized)
         {
             if (has_in)
@@ -123,32 +138,33 @@ namespace T1::wbc
         else if (has_in)
         {
             qp.update(impl_->H, impl_->g, proxsuite::nullopt, proxsuite::nullopt,
-                      impl_->C_full, impl_->c_lo, impl_->c_hi, l_box, u_box, false);
+                      impl_->C_full, impl_->c_lo, impl_->c_hi, l_box, u_box, true);
         }
         else
         {
             qp.update(impl_->H, impl_->g, proxsuite::nullopt, proxsuite::nullopt,
                       proxsuite::nullopt, proxsuite::nullopt, proxsuite::nullopt, l_box,
-                      u_box, false);
+                      u_box, true);
         }
 
         qp.solve();
 
-        if (iterations != nullptr)
-        {
-            *iterations = static_cast<int>(qp.results.info.iter);
-        }
-        if (solve_time_us != nullptr)
-        {
-            *solve_time_us = qp.results.info.run_time;
-        }
+        set_timing(iterations, solve_time_us, static_cast<int>(qp.results.info.iter),
+                   qp.results.info.run_time);
 
         const QpStatus status = map_status(qp.results.info.status);
         if (status == QpStatus::kOk && x != nullptr)
         {
             *x = qp.results.x;
         }
-        
+        if (status != QpStatus::kOk)
+        {
+            // Warm-start from NaN x after a failed solve makes every later
+            // well-posed cycle hit 100*(max_iter_in+1)=150100.
+            qp.results.cleanup(qp.settings);
+            impl_->initialized = false;
+        }
+
         return status;
     }
 

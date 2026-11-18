@@ -1,5 +1,6 @@
 #include "control/controller.hpp"
 
+#include <cmath>
 #include <Eigen/Geometry>
 
 #include "control/types.hpp"
@@ -36,6 +37,13 @@ namespace T1::wbc
 
     Output WbcController::update(const RobotState& state, const Reference& ref, double dt)
     {
+        if (!state.arm.q.allFinite() || !std::isfinite(dt) || dt <= 0.0)
+        {
+            Output out;
+            out.qp_status = QpStatus::kInfeasible;
+            return out;
+        }
+
         // 运动学更新
         kinematics_.update(state.arm.q);
         const Iso3 T_chassis_tool = kinematics_.tool_pose();
@@ -53,8 +61,13 @@ namespace T1::wbc
             chassis_, state.chassis_pose, T_chassis_tool, kinematics_.tool_jacobian());
         
         /*  QP 任务添加  */
+        WbcVec x_meas = WbcVec::Zero();
+        x_meas[0] = state.chassis_twist.v;
+        x_meas[1] = state.chassis_twist.omega;
+        x_meas.tail<6>() = state.arm.dq;
+
         qp_.reset();
-        ee_task_.add_to(qp_, J, T_odom_tool, ref.ee_pose, ref.ee_twist);
+        ee_task_.add_to(qp_, J, T_odom_tool, ref.ee_pose, ref.ee_twist, x_meas);
         posture_task_.add_to(qp_, state.arm.q);
         chassis_task_.add_to(qp_, ref, state.chassis_pose);
         limits_.apply(qp_, state.arm.q, x_prev_, dt);
@@ -83,6 +96,11 @@ namespace T1::wbc
     void WbcController::set_tool_payload(double mass, const Vec3& com_in_ft)
     {
         dynamics_.set_tool_payload(mass, com_in_ft);
+    }
+
+    ArmVec WbcController::gravity_torque(const ArmVec& q, const Vec3& gravity_in_base)
+    {
+        return dynamics_.gravity_torque(q, gravity_in_base);
     }
 
 }  // namespace T1::wbc

@@ -39,9 +39,12 @@ namespace
     void integrate(T1::wbc::RobotState& state, const T1::WbcVec& x, double dt)
     {
         state.arm.q += x.tail<6>() * dt;
+        state.arm.dq = x.tail<6>();
         state.chassis_pose.x += x[0] * std::cos(state.chassis_pose.yaw) * dt;
         state.chassis_pose.y += x[0] * std::sin(state.chassis_pose.yaw) * dt;
         state.chassis_pose.yaw += x[1] * dt;
+        state.chassis_twist.v = x[0];
+        state.chassis_twist.omega = x[1];
     }
 }
 
@@ -50,7 +53,10 @@ TEST(Controller, TracksMovingToolWithin5mm)
     T1::ArmModelConfig arm_cfg;
     arm_cfg.urdf_xml = load_urdf();
     T1::ArmModel model(arm_cfg);
-    const T1::wbc::WbcConfig cfg = T1::wbc::load_wbc_config(T1_TEST_WBC_YAML);
+    T1::wbc::WbcConfig cfg = T1::wbc::load_wbc_config(T1_TEST_WBC_YAML);
+    /* live kFree regularization is high to keep the chassis still; this test needs
+       the chassis free to help the arm over 0.3 m */
+    cfg.chassis_task.regularization = 10.0;
     T1::wbc::WbcController wbc(cfg, model);
 
     T1::wbc::RobotState state;
@@ -90,6 +96,7 @@ TEST(Controller, ChassisFollowsWhenToolOutOfReach)
     arm_cfg.urdf_xml = load_urdf();
     T1::ArmModel model(arm_cfg);
     T1::wbc::WbcConfig cfg = T1::wbc::load_wbc_config(T1_TEST_WBC_YAML);
+    
     /* 默认姿态权太小，臂会先被拉奇异；加重后底盘必须跟着走 */
     cfg.posture.weight = T1::ArmVec::Constant(50.0);
     T1::wbc::WbcController wbc(cfg, model);

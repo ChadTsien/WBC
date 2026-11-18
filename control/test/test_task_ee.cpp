@@ -59,3 +59,25 @@ TEST(TaskEe, AxisTiltPointOneRadian)
     EXPECT_NEAR(task.last_error()(4), 0.0, 1e-12);
     EXPECT_NEAR(task.last_error().tail<2>().norm(), 0.1, 1e-3);
 }
+
+TEST(TaskEe, DampingOpposesMeasuredTaskVelocity)
+{
+    T1::wbc::EeTaskConfig cfg;
+    cfg.kd = T1::Vec5::Constant(1.0);
+    cfg.weight = T1::Vec5::Ones();
+    T1::wbc::EeTrackingTask task;
+    task.configure(cfg);
+    T1::wbc::QpProblem qp(0);
+
+    T1::WholeBodyJacobian J = T1::WholeBodyJacobian::Zero();
+    J(0, 0) = 1.0;
+    const T1::Iso3 T = T1::Iso3::Identity();
+    const T1::Twist twist;
+    T1::WbcVec x_meas = T1::WbcVec::Zero();
+    x_meas[0] = 0.2;
+
+    task.add_to(qp, J, T, T, twist, x_meas);
+
+    EXPECT_NEAR(task.last_error().norm(), 0.0, 1e-12);
+    EXPECT_NEAR(qp.g()[0], 0.4, 1e-12);
+}

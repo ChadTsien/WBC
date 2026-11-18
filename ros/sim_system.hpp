@@ -45,6 +45,8 @@ namespace T1::sim
             std::vector<double> ft_state_;  // force xyz, torque xyz
             double timestep_ = 0.001;
             bool enable_viewer_ = false;
+            // WBC spawn 之前 kp=0；若仍 mj_step，J3 会自由落体，hold 钉在地上。
+            bool physics_armed_ = false;
     };
 
 }  // namespace T1::sim

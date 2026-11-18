@@ -89,6 +89,7 @@ namespace T1::sim
             WorldConfig wcfg;
             wcfg.mjcf_path = mjcf;
             wcfg.timestep = timestep_;
+            wcfg.q_home = T1::require_vector(physics, "home_q", T1::kNumArmJoints);
             const char* arms[6] = {
                 "arm_joint1", "arm_joint2", "arm_joint3",
                 "arm_joint4", "arm_joint5", "arm_joint6"};
@@ -110,7 +111,8 @@ namespace T1::sim
     SimSystem::CallbackReturn SimSystem::on_activate(const rclcpp_lifecycle::State&)
     {
         const ArmState arm = world_->arm_state();
-        // 先把控制指令赋为当前关节，避免猛冲
+        physics_armed_ = false;
+        // 先把控制指令赋为当前关节，避免猛冲。kp 保持 0，read() 在收到非零 kp 前不步进。
         for (int i = 0; i < 6; ++i)
         {
             arm_state_position_[i] = arm.q[i];
@@ -191,7 +193,9 @@ namespace T1::sim
 
     return_type SimSystem::read(const rclcpp::Time&, const rclcpp::Duration& period)
     {
-        const int n = std::max(1, static_cast<int>(std::lround(period.seconds() / timestep_)));
+        const int n = physics_armed_
+            ? std::max(1, static_cast<int>(std::lround(period.seconds() / timestep_)))
+            : 0;
         for (int i = 0; i < n; ++i)
         {
             world_->step();
@@ -257,6 +261,18 @@ namespace T1::sim
         wheels.left = finite_or_zero(wheel_cmd_velocity_[0]);
         wheels.right = finite_or_zero(wheel_cmd_velocity_[1]);
         world_->set_wheel_command(wheels);
+
+        if (!physics_armed_)
+        {
+            for (int i = 0; i < 6; ++i)
+            {
+                if (cmd.kp[i] > 0.0)
+                {
+                    physics_armed_ = true;
+                    break;
+                }
+            }
+        }
         return return_type::OK;
     }
 

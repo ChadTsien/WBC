@@ -16,12 +16,14 @@ namespace T1::sim
      * - mjcf_path：展开后的 MJCF 路径（scene.xml）
      * - timestep：物理步长，s，必须与 MJCF 里 <option timestep> 一致
      * - effort_limits：六轴力矩饱和，N·m 或 N（J3）
+     * - q_home：reset 后的臂关节，须与 wbc.yaml posture.q_nominal 一致
      */
     struct WorldConfig
     {
         std::string mjcf_path;
         double timestep = 0.001;  // s, must match <option timestep> in the MJCF
         ArmVec effort_limits = ArmVec::Constant(10.0);
+        ArmVec q_home = ArmVec::Zero();
     };
 
     /**

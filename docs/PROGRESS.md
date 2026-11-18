@@ -46,18 +46,18 @@
 | 29 | `control/limits` | 完成 | 2026-11-17 |
 | 30 | `control/command` | 完成 | 2026-11-17 |
 | 31 | `control/config` | 完成 | 2026-11-17 |
-| 32 | `control/controller`（不含接触） | 完成 | 2026-11-17 |
-| 33 | `ros/io` | 未开始 | |
-| 34 | `ros/controller` | 未开始 | |
+| 32 | `control/controller`（不含接触） | 完成 | 2026-11-18 |
+| 33 | `ros/io` | 完成 | 2026-11-18 |
+| 34 | `ros/controller` | 完成 | 2026-11-18 |
 | — | M1 验收：遥控底盘时工具误差 < 5 mm | 未开始 | |
 
 ## M2 状态估计
 
 | # | 文件 | 状态 | 日期 |
 |---|---|---|---|
-| 35 | `estimation/odometry` | 未开始 | |
-| 36 | `estimation/ekf` | 未开始 | |
-| 37 | `estimation/tilt` | 未开始 | |
+| 35 | `estimation/odometry` | 完成 | 2026-11-18 |
+| 36 | `estimation/ekf` | 完成 | 2026-11-18 |
+| 37 | `estimation/tilt` | 完成 | 2026-11-18 |
 | — | M2 验收：加噪声和打滑后 M1 指标仍成立 | 未开始 | |
 
 ## M3a 力传感器补偿
@@ -78,7 +78,7 @@
 
 | # | 文件 | 状态 | 日期 |
 |---|---|---|---|
-| 46 | `dyn/dynamics`（重力矩） | 未开始 | |
+| 46 | `dyn/dynamics`（重力矩） | 完成 | 2026-11-18 |
 | 47 | `signal/contact` | 未开始 | |
 | 48 | `control/contact_phase` | 未开始 | |
 | 49 | `control/admittance` | 未开始 | |

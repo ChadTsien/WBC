@@ -4,12 +4,14 @@
     ros2 run wbc rerun_view.py [--no-spawn] [--save bags/run.rrd]
 """
 import argparse
+import sys
 
 import rclpy
 from geometry_msgs.msg import WrenchStamped
 from nav_msgs.msg import Odometry
 from rclpy.node import Node
 from rclpy.qos import DurabilityPolicy, QoSProfile, ReliabilityPolicy, qos_profile_sensor_data
+from rclpy.utilities import remove_ros_args
 from sensor_msgs.msg import JointState
 from tf2_msgs.msg import TFMessage
 
@@ -26,17 +28,22 @@ def stamp_s(stamp):
 
 
 def blueprint():
+    legend = rrb.PlotLegend(visible=True)
     return rrb.Blueprint(
         rrb.Horizontal(
-            rrb.Spatial3DView(origin="/", name="机器人"),
+            rrb.Spatial3DView(origin="/", name="robot"),
             rrb.Vertical(
-                rrb.TimeSeriesView(origin="/plots/ee", name="工具误差"),
-                rrb.TimeSeriesView(origin="/plots/base", name="底盘"),
-                rrb.TimeSeriesView(origin="/plots/force", name="力"),
-                rrb.TimeSeriesView(origin="/plots/timing", name="耗时 us"),
+                rrb.TimeSeriesView(origin="/plots/ee", name="ee_error",
+                                   plot_legend=legend),
+                rrb.TimeSeriesView(origin="/plots/base", name="chassis",
+                                   plot_legend=legend),
+                rrb.TimeSeriesView(origin="/plots/force", name="force",
+                                   plot_legend=legend),
+                rrb.TimeSeriesView(origin="/plots/timing", name="timing_us",
+                                   plot_legend=legend),
             ),
         ),
-        collapse_panels=True,
+        collapse_panels=False,
     )
 
 
@@ -87,8 +94,8 @@ class RerunView(Node):
         self._time(msg.header.stamp)
         for name, value in zip(EE_NAMES, msg.ee_error):
             rr.log(f"plots/ee/{name}", rr.Scalars(float(value)))
-        rr.log("plots/base/v_cmd", rr.Scalars(msg.base_v_cmd))
-        rr.log("plots/base/omega_cmd", rr.Scalars(msg.base_omega_cmd))
+        rr.log("plots/base/v_cmd", rr.Scalars(msg.chassis_v_cmd))
+        rr.log("plots/base/omega_cmd", rr.Scalars(msg.chassis_omega_cmd))
         rr.log("plots/timing/qp_us", rr.Scalars(msg.qp_solve_time_us))
         rr.log("plots/timing/cycle_us", rr.Scalars(msg.cycle_time_us))
 
@@ -136,7 +143,7 @@ class RerunView(Node):
 
 def series_style():
     for name in EE_NAMES:
-        rr.log(f"plots/ee/{name}", rr.SeriesLines(names=name), static=True)
+        rr.log(f"plots/ee/{name}", rr.SeriesLines(names=f"ee_{name}"), static=True)
     for name in ("v", "omega", "v_cmd", "omega_cmd"):
         rr.log(f"plots/base/{name}", rr.SeriesLines(names=name), static=True)
     for name in ("normal", "in_contact", "x", "y", "z", "tx", "ty", "tz"):
@@ -145,18 +152,32 @@ def series_style():
         rr.log(f"plots/timing/{name}", rr.SeriesLines(names=name), static=True)
 
 
-def main():
+def main(args=None):
+    # launch 的 Node 会在命令行末尾加上 --ros-args，先剥掉再交给 argparse。
+    argv = remove_ros_args(args=sys.argv if args is None else args)
     parser = argparse.ArgumentParser(description="Log WBC topics to Rerun")
-    parser.add_argument("--no-spawn", action="store_true")
+    parser.add_argument("--no-spawn", action="store_true",
+                        help="do not open a viewer")
+    parser.add_argument("--native", action="store_true",
+                        help="desktop viewer (can SIGSEGV on some X11 setups)")
     parser.add_argument("--save", default="", help="also write an .rrd recording")
-    args = parser.parse_args()
+    parsed = parser.parse_args(argv[1:])
 
-    rr.init("wbc", spawn=not args.no_spawn, default_blueprint=blueprint())
-    if args.save:
-        rr.save(args.save)
+    bp = blueprint()
+    rr.init("wbc", spawn=False, default_blueprint=bp)
+    if parsed.save:
+        rr.save(parsed.save)
+    if parsed.native:
+        rr.spawn(default_blueprint=bp)
+    elif not parsed.no_spawn:
+        # Native spawn hits XIQueryDevice SIGSEGV on this machine's X11.
+        uri = rr.serve_grpc(default_blueprint=bp)
+        rr.serve_web_viewer(connect_to=uri)
+        print(f"Rerun web viewer: http://localhost:9090  (grpc {uri})",
+              flush=True)
     series_style()
 
-    rclpy.init()
+    rclpy.init(args=args)
     node = RerunView()
     try:
         rclpy.spin(node)

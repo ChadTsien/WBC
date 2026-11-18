@@ -12,12 +12,15 @@ TEST(Config, LoadsRepoWbcYaml)
 {
     const T1::wbc::WbcConfig c = T1::wbc::load_wbc_config(T1_TEST_WBC_YAML);
     EXPECT_DOUBLE_EQ(c.control_rate_hz, 500.0);
-    EXPECT_EQ(c.max_inequality_rows, 64);
+    EXPECT_EQ(c.max_inequality_rows, 0);
+    EXPECT_DOUBLE_EQ(c.command.q_min[2], -0.34);
+    EXPECT_DOUBLE_EQ(c.command.q_max[2], 0.38);
     EXPECT_DOUBLE_EQ(c.ee.kp[0], 5.0);
+    EXPECT_DOUBLE_EQ(c.ee.kd[0], 0.5);
     EXPECT_DOUBLE_EQ(c.ee.weight[3], 300.0);
     EXPECT_DOUBLE_EQ(c.posture.q_nominal[1], 1.0);
     EXPECT_DOUBLE_EQ(c.limits.v_max, 0.5);
-    EXPECT_DOUBLE_EQ(c.command.free_motion.kp[2], 2000.0);
+    EXPECT_DOUBLE_EQ(c.command.free_motion.kp[2], 200.0);
     EXPECT_DOUBLE_EQ(c.chassis.wheel_radius, 0.0655);
     EXPECT_TRUE(c.base_R_imu.isIdentity());
     EXPECT_EQ(c.default_brush, "default");

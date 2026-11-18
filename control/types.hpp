@@ -61,7 +61,7 @@ namespace T1::wbc
      *
      * 成员
      * - chassis_pose / chassis_twist：底盘，odom，m、rad、m/s、rad/s
-     *   （消息字段仍叫 base_*，对应本结构的 chassis_*）
+     *   （消息字段 chassis_*）
      * - ee_pose / ee_twist：brush_tip，odom；绕工具轴滚转不进任务
      * - surface_normal：世界系单位向量，指出表面
      * - desired_normal_force：N，≥ 0，压向表面

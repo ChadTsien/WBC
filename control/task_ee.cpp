@@ -12,7 +12,7 @@ namespace T1::wbc
 
     void EeTrackingTask::add_to(QpProblem& qp, const WholeBodyJacobian& J,
                                 const Iso3& ee_world, const Iso3& ee_ref,
-                                const Twist& ee_twist_ref)
+                                const Twist& ee_twist_ref, const WbcVec& x_meas)
     {
         const Mat3 R = ee_world.linear();  // 末端姿态
         const Vec3 e_w = R.col(2).cross(ee_ref.linear().col(2));
@@ -35,12 +35,16 @@ namespace T1::wbc
             VecX(config_.kp.tail<2>().cwiseProduct(error_.tail<2>())),
             config_.max_error_rate);
         
-        // 前馈控制
-        Vec5 b;
-        b.head<3>() = ee_twist_ref.linear + pos_fb;
-        b(3) = R.col(0).dot(ee_twist_ref.angular) + ang_fb(0);
-        b(4) = R.col(1).dot(ee_twist_ref.angular) + ang_fb(1);
-        
+        Vec5 v_ref = Vec5::Zero();
+        v_ref.head<3>() = ee_twist_ref.linear;
+        v_ref(3) = R.col(0).dot(ee_twist_ref.angular);
+        v_ref(4) = R.col(1).dot(ee_twist_ref.angular);
+
+        Vec5 b = v_ref;
+        b.head<3>() += pos_fb;
+        b.tail<2>() += ang_fb;
+        b -= config_.kd.cwiseProduct(Vec5(A * x_meas) - v_ref);
+
         qp.add_cost(A, b, VecX(config_.weight));
     }
 
