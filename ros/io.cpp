@@ -42,6 +42,11 @@ namespace T1::wbc
             r.chassis_pose.yaw = p.chassis_yaw;
             r.chassis_twist.v = p.chassis_v;
             r.chassis_twist.omega = p.chassis_omega;
+            r.ee_frame = (p.ee_frame == ::wbc::msg::TaskSpacePoint::EE_MOUNT)
+                             ? EeFrame::kMount
+                             : (p.ee_frame == ::wbc::msg::TaskSpacePoint::EE_BASE)
+                                   ? EeFrame::kBase
+                                   : EeFrame::kOdom;
             r.ee_pose = pose_to_iso(p.ee_pose);
             r.ee_twist.linear = Vec3(p.ee_twist.linear.x, p.ee_twist.linear.y, p.ee_twist.linear.z);
             r.ee_twist.angular =

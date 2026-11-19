@@ -50,7 +50,7 @@
             <geom type="mesh" mesh="arm_joint1" group="3" />
             <body name="arm_link2" pos="0.22 0 0.13296">
               <inertial pos="0.13648 0.0063874 -0.067802" quat="0.513557 0.483573 0.480467 0.521122" mass="1.5" diaginertia="0.0156263 0.0149195 0.0015727" />
-              <joint name="arm_joint2" pos="0 0 0" axis="0 0 -1" range="-3.14 3.14" actuatorfrcrange="-35 35" />
+              <joint name="arm_joint2" pos="0 0 0" axis="0 0 1" range="-3.14 3.14" actuatorfrcrange="-35 35" />
               <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="arm_joint2" />
               <geom type="mesh" mesh="arm_joint2" group="3" />
               <body name="arm_link3" pos="0.32549 -0.00010767 -0.5001">

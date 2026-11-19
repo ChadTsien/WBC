@@ -49,6 +49,11 @@ namespace T1
         return frame_pose(model_.mount_frame_id()).inverse() * tool_pose();
     }
 
+    Iso3 ArmKinematics::mount_pose() const
+    {
+        return frame_pose(model_.mount_frame_id());
+    }
+
     ArmJacobian ArmKinematics::frame_jacobian(int frame_id) const
     {
         ArmJacobian J = ArmJacobian::Zero();

@@ -56,18 +56,34 @@ namespace T1::wbc
             Eigen::AngleAxisd(state.chassis_pose.yaw, Vec3::UnitZ()).toRotationMatrix();
         const Iso3 T_odom_tool = T_odom_chassis * T_chassis_tool;
 
-        // 全身雅可比
-        const WholeBodyJacobian J = whole_body_jacobian(
+        WholeBodyJacobian J = whole_body_jacobian(
             chassis_, state.chassis_pose, T_chassis_tool, kinematics_.tool_jacobian());
-        
-        /*  QP 任务添加  */
+
+        Iso3 T_ee_ref = ref.ee_pose;
+        Twist twist_ref = ref.ee_twist;
+        if (ref.ee_frame != EeFrame::kOdom)
+        {
+            Iso3 T_parent = T_odom_chassis;
+            if (ref.ee_frame == EeFrame::kMount)
+            {
+                T_parent = T_odom_chassis * kinematics_.mount_pose();
+            }
+            T_ee_ref = T_parent * ref.ee_pose;
+            twist_ref.linear = T_parent.linear() * ref.ee_twist.linear;
+            twist_ref.angular = T_parent.linear() * ref.ee_twist.angular;
+            J.leftCols<2>().setZero();
+        }
+
         WbcVec x_meas = WbcVec::Zero();
         x_meas[0] = state.chassis_twist.v;
         x_meas[1] = state.chassis_twist.omega;
         x_meas.tail<6>() = state.arm.dq;
 
         qp_.reset();
-        ee_task_.add_to(qp_, J, T_odom_tool, ref.ee_pose, ref.ee_twist, x_meas);
+        if (!ref.skip_ee)
+        {
+            ee_task_.add_to(qp_, J, T_odom_tool, T_ee_ref, twist_ref, x_meas);
+        }
         posture_task_.add_to(qp_, state.arm.q);
         chassis_task_.add_to(qp_, ref, state.chassis_pose);
         limits_.apply(qp_, state.arm.q, x_prev_, dt);

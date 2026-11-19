@@ -1,6 +1,6 @@
 """MuJoCo simulation + ros2_control + WBC.
 
-    ros2 launch wbc sim.launch.py [wbc:=false] [rerun:=true] [foxglove:=false] [rviz:=false]
+    ros2 launch wbc sim.launch.py [wbc:=false] [rerun:=true] [teleop:=true] [foxglove:=false] [rviz:=false]
 """
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, OpaqueFunction
@@ -40,6 +40,7 @@ def generate_launch_description():
         DeclareLaunchArgument("wbc", default_value="true"),
         DeclareLaunchArgument("rerun", default_value="true"),
         DeclareLaunchArgument("rerun_save", default_value=""),
+        DeclareLaunchArgument("teleop", default_value="true"),
         DeclareLaunchArgument("foxglove", default_value="false"),
         DeclareLaunchArgument("rviz", default_value="false"),
 
@@ -53,6 +54,8 @@ def generate_launch_description():
         spawner("ft_sensor_broadcaster"),
         spawner("wbc_controller", IfCondition(LaunchConfiguration("wbc"))),
         OpaqueFunction(function=rerun_node),
+        Node(package="wbc", executable="teleop_gui.py", output="screen",
+             condition=IfCondition(LaunchConfiguration("teleop"))),
 
         Node(package="foxglove_bridge", executable="foxglove_bridge",
              condition=IfCondition(LaunchConfiguration("foxglove"))),

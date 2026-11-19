@@ -15,6 +15,25 @@
 
 namespace T1::wbc
 {
+    /**
+     * 整机控制策略（ROS 层）
+     *
+     * 说明
+     * - 不进 QP；切模式时 snapshot_hold，再写出 chassis_mode / skip_ee / ee_frame
+     * - kHold：钉上次车位 + 世界系工具
+     * - kChassisTeleop：底盘是遥控模式，臂收回舒适构型
+     * - kWholeBody：全身控制，车臂协同作业。轨迹在 odom，底盘 kFree
+     * - kArmRelative：底盘钉住，只动机械臂
+     * - kTeleopRelative：解耦模式，底盘遥控模式，机械臂走轨迹
+     */
+    enum class ControlMode : std::uint8_t
+    {
+        kHold = 0,
+        kChassisTeleop = 1,
+        kWholeBody = 2,
+        kArmRelative = 3,
+        kTeleopRelative = 4
+    };
 
     /**
      * ros2_control 插件：500 Hz 回路里串起估计、力补偿、接触和全身 QP
@@ -82,15 +101,24 @@ namespace T1::wbc
              * - contact：接触与脱落；M3b 前为默认值
              */
             RobotState read_state(double dt, Wrench* compensated_ft, ft::ContactResult* contact);
+            
+            /**
+             * 把当前车位和世界系工具写入 hold_reference_
+             *
+             * 说明
+             * - 使能、以及 ControlMode 切换时调用
+             */
+            void snapshot_hold(const RobotState& state);
 
             /**
              * 当前参考
              *
              * 说明
-             * - 有轨迹则按时间采样；有未超时遥控则底盘改为 kTrackTwist
-             * - 都没有则用使能时记下的 hold_reference_
+             * - 遥控且轨迹不在 odom → kTeleopRelative
+             * - 只有遥控 → kChassisTeleop；只有轨迹 → kWholeBody / kArmRelative
+             * - 都没有 → kHold
              */
-            Reference current_reference(double now_s);
+            Reference current_reference(double now_s, const RobotState& state);
 
             /** 把 Output 写进命令接口 */
             void write_command(const Output& out);
@@ -118,6 +146,7 @@ namespace T1::wbc
             ft::ContactDetector contact_detector_;
             WbcRosIo io_;
             bool have_hold_ = false;
+            ControlMode mode_ = ControlMode::kHold;
 
             Reference hold_reference_;
     };

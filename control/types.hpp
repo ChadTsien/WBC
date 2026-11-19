@@ -26,6 +26,21 @@ namespace T1::wbc
     };
 
     /**
+     * 末端参考所在坐标系
+     *
+     * 说明
+     * - kOdom：ee_pose / ee_twist 在世界系，全身雅可比
+     * - kBase：base_link（车体），乘 T_odom_base，J 底盘列清零
+     * - kMount：arm_base_link（臂座），乘 T_odom_base·T_base_mount，J 底盘列清零
+     */
+    enum class EeFrame : std::uint8_t
+    {
+        kOdom = 0,
+        kBase = 1,
+        kMount = 2
+    };
+
+    /**
      * 工具接触阶段
      *
      * 说明
@@ -62,7 +77,8 @@ namespace T1::wbc
      * 成员
      * - chassis_pose / chassis_twist：底盘，odom，m、rad、m/s、rad/s
      *   （消息字段 chassis_*）
-     * - ee_pose / ee_twist：brush_tip，odom；绕工具轴滚转不进任务
+     * - ee_pose / ee_twist：brush_tip，坐标系由 ee_frame 指定；绕工具轴滚转不进任务
+     * - skip_ee / ee_frame：ROS 状态机填写；ChassisTask 不看
      * - surface_normal：世界系单位向量，指出表面
      * - desired_normal_force：N，≥ 0，压向表面
      *
@@ -79,6 +95,9 @@ namespace T1::wbc
         ContactPhase contact_phase = ContactPhase::kNone;
         Vec3 surface_normal = Vec3::UnitZ();
         double desired_normal_force = 0.0;
+
+        bool skip_ee = false;                // true: 本拍不加末端任务(遥控收臂)
+        EeFrame ee_frame = EeFrame::kOdom;   // 末端参考坐标系
     };
 
     /**

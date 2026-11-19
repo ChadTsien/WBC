@@ -29,7 +29,7 @@ namespace T1::wbc
              *
              * 参数
              * - state：关节、底盘位姿、重力
-             * - ref：工具位姿 / 底盘模式，odom
+             * - ref：工具位姿、chassis_mode；skip_ee 则不加末端；ee_frame 非 odom 时先变到世界再清 J 底盘列
              * - dt：控制周期，s
              */
             Output update(const RobotState& state, const Reference& ref, double dt);

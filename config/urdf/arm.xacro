@@ -57,7 +57,7 @@
       <parent link="arm_link1"/>
       <child link="arm_link2"/>
       <origin xyz="0.22 0 0.13296" rpy="0 0 0"/>
-      <axis xyz="0 0 -1"/>
+      <axis xyz="0 0 1"/>
       <limit lower="${limits['arm_joint2']['lower']}" upper="${limits['arm_joint2']['upper']}"
              velocity="${limits['arm_joint2']['velocity']}" effort="${limits['arm_joint2']['effort']}"/>
     </joint>

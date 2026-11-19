@@ -64,7 +64,8 @@ install(DIRECTORY
   FILES_MATCHING PATTERN "*.hpp")
 install(DIRECTORY config/ DESTINATION share/${PROJECT_NAME})
 install(DIRECTORY launch/ DESTINATION share/${PROJECT_NAME}/launch)
-install(PROGRAMS tools/urdf_to_mjcf.py tools/rerun_view.py DESTINATION lib/${PROJECT_NAME})
+install(PROGRAMS tools/urdf_to_mjcf.py tools/rerun_view.py tools/teleop_gui.py
+  DESTINATION lib/${PROJECT_NAME})
 
 # Must live in this CMakeLists (same scope as ament_package). A subdirectory
 # call never registers the ament index, so pluginlib cannot find the plugins.

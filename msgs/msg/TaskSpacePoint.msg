@@ -12,7 +12,11 @@ float64 chassis_yaw
 float64 chassis_v
 float64 chassis_omega
 
-# brush_tip reference, world frame. Roll about the brush axis is ignored (5-DoF task).
+# brush_tip reference. Roll about the brush axis is ignored (5-DoF task).
+uint8 EE_ODOM = 0
+uint8 EE_BASE = 1
+uint8 EE_MOUNT = 2
+uint8 ee_frame
 geometry_msgs/Pose ee_pose
 geometry_msgs/Twist ee_twist
 

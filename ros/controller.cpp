@@ -10,8 +10,10 @@
 #include <vector>
 
 #include "control/reference.hpp"
+#include "control/types.hpp"
 #include "estimation/tilt.hpp"
 #include "kine/arm.hpp"
+#include "model/chassis_model.hpp"
 #include "types/types.hpp"
 
 namespace T1::wbc
@@ -242,17 +244,9 @@ namespace T1::wbc
         wbc_->reset(state);
 
         hold_reference_ = Reference{};
-        // kFree 只把 [v,ω] 往 0 拉，拦不住臂摆的反力；站立 hold 要钉住使能时的底盘位姿。
-        hold_reference_.chassis_mode = ChassisMode::kTrackPose;
-        hold_reference_.chassis_pose = state.chassis_pose;
+        mode_ = ControlMode::kHold;
         have_hold_ = false;
-        if (state.arm.q.allFinite())
-        {
-            ArmKinematics kin(*model_);
-            kin.update(state.arm.q);
-            hold_reference_.ee_pose = T_odom_chassis(state.chassis_pose) * kin.tool_pose();
-            have_hold_ = true;
-        }
+        snapshot_hold(state);
 
         write_hold();
         return CallbackReturn::SUCCESS;
@@ -293,16 +287,7 @@ namespace T1::wbc
         Wrench compensated_ft;
         ft::ContactResult contact;
         const RobotState state = read_state(dt, &compensated_ft, &contact);
-        if (state.arm.q.allFinite() && !have_hold_)
-        {
-            ArmKinematics kin(*model_);
-            kin.update(state.arm.q);
-            hold_reference_.ee_pose =
-                T_odom_chassis(state.chassis_pose) * kin.tool_pose();
-            hold_reference_.chassis_pose = state.chassis_pose;
-            have_hold_ = true;
-        }
-        const Reference ref = current_reference(now_s);
+        const Reference ref = current_reference(now_s, state);
 
         if (contact.brush_detached)
         {
@@ -407,18 +392,100 @@ namespace T1::wbc
         return state;
     }
 
-    Reference WbcRosController::current_reference(double now_s)
+    void WbcRosController::snapshot_hold(const RobotState& state)
     {
-        Reference ref = hold_reference_;
-        const auto traj = io_.trajectory();
-        if (traj && !traj->points.empty())
+        hold_reference_.chassis_mode = ChassisMode::kTrackPose;
+        hold_reference_.chassis_pose = state.chassis_pose;
+        hold_reference_.chassis_twist = ChassisTwist{};
+        hold_reference_.ee_twist = Twist{};
+        hold_reference_.skip_ee = false;
+        hold_reference_.ee_frame = EeFrame::kOdom;
+        if (state.arm.q.allFinite() && model_) 
         {
-            ref = sample_reference(traj->points, now_s - traj->start_time);
+            ArmKinematics kin(*model_);
+            kin.update(state.arm.q);
+            hold_reference_.ee_pose = 
+                T_odom_chassis(state.chassis_pose) * kin.tool_pose();
+            have_hold_ = true;
         }
-        if (const auto twist = io_.teleop(now_s))
+    }
+
+    Reference WbcRosController::current_reference(double now_s, const RobotState& state)
+    {
+        if (state.arm.q.allFinite() && !have_hold_)
         {
-            ref.chassis_mode = ChassisMode::kTrackTwist;
-            ref.chassis_twist = *twist;
+            snapshot_hold(state);
+        }
+
+        const auto traj = io_.trajectory();  // 从 ROS 消息中读取轨迹
+        const bool have_traj = traj && !traj->points.empty();
+        const auto twist = io_.teleop(now_s);  // 从 ROS 消息中读取底盘控制速度
+        const EeFrame traj_frame =
+            have_traj ? traj->points.front().ref.ee_frame : EeFrame::kOdom;
+
+        /*  模式选择  */
+        ControlMode next = ControlMode::kHold;
+
+        // 解偶模式：底盘速度控制、机械臂运动轨迹位于机械臂基座标系
+        if (twist && have_traj && traj_frame != EeFrame::kOdom)
+        {
+            next = ControlMode::kTeleopRelative;
+        }
+        else if (twist)  // 遥控模式：底盘运动，收臂到舒适关节
+        {
+            next = ControlMode::kChassisTeleop;
+        }
+        else if (have_traj)  // 全身控制或只有机械臂运动
+        {
+            next = (traj_frame == EeFrame::kOdom)
+                       ? ControlMode::kWholeBody
+                       : ControlMode::kArmRelative;
+        }
+
+        if (next != mode_)  // 模式切换的时候去复位一下
+        {
+            snapshot_hold(state);
+            mode_ = next;
+        }
+
+        Reference ref = hold_reference_;
+        ref.skip_ee = false;
+        ref.ee_frame = EeFrame::kOdom;
+
+        switch (mode_)
+        {
+            case ControlMode::kHold: 
+                ref.chassis_mode = ChassisMode::kTrackPose;
+                ref.ee_twist = Twist{};
+                break;
+
+            case ControlMode::kChassisTeleop:
+                ref.chassis_mode = ChassisMode::kTrackTwist;
+                ref.chassis_twist = *twist;
+                ref.skip_ee = true;
+                break;
+
+            case ControlMode::kWholeBody:
+                ref = sample_reference(traj->points, now_s - traj->start_time);
+                ref.chassis_mode = ChassisMode::kFree;
+                ref.skip_ee = false;
+                ref.ee_frame = EeFrame::kOdom;
+                break;
+
+            case ControlMode::kArmRelative:
+                ref = sample_reference(traj->points, now_s - traj->start_time);
+                ref.chassis_mode = ChassisMode::kTrackPose;
+                ref.chassis_pose = hold_reference_.chassis_pose;
+                ref.chassis_twist = ChassisTwist{};
+                ref.skip_ee = false;
+                break;
+
+            case ControlMode::kTeleopRelative:
+                ref = sample_reference(traj->points, now_s - traj->start_time);
+                ref.chassis_mode = ChassisMode::kTrackTwist;
+                ref.chassis_twist = *twist;
+                ref.skip_ee = false;
+                break;
         }
         return ref;
     }

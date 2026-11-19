@@ -48,6 +48,9 @@ namespace T1
             */
             Iso3 tool_pose_in_mount() const;
 
+            /** 臂座 arm_base_link 在 base_link 下的位姿 */
+            Iso3 mount_pose() const;
+
             /**
             * 坐标系速度对 dq 的 6×6 雅可比（base_link 坐标轴）
             *
