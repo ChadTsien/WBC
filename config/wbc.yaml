@@ -7,15 +7,15 @@ ee_task:
   kp: [5.0, 5.0, 5.0, 5.0, 5.0]
   kd: [0.5, 0.5, 0.5, 0.3, 0.3]
   weight: [1000.0, 1000.0, 1000.0, 2000.0, 2000.0]
-  max_error_rate: 0.3
+  max_error_rate: 0.08
 
 posture_task:
   q_nominal: [-0.785, 1.5707, 0.0, 0.0, 0.0, 0.0]   # keep in sync with sim.yaml physics.home_q
-  weight: [5.0, 5.0, 5.0, 5.0, 5.0, 5.0]
+  weight: [100.0, 100.0, 80.0, 80.0, 80.0, 80.0]
   kp: 1.0
 
 chassis_task:
-  regularization: 10.0
+  regularization: 80.0
   track_weight: 10000.0
   kp_position: 1.0
   kp_yaw: 1.5
@@ -25,10 +25,10 @@ limits:
   q_max: [3.14, 3.14, 0.38, 3.14, 0.33, 1.58]
   dq_max: [2.0, 2.0, 0.15, 3.0, 3.0, 3.0]
   ddq_max: [10.0, 10.0, 1.0, 15.0, 15.0, 15.0]
-  v_max: 0.5
-  omega_max: 1.0
-  dv_max: 0.5
-  domega_max: 1.5
+  v_max: 0.18
+  omega_max: 0.4
+  dv_max: 0.15    # 底盘加速度
+  domega_max: 0.4
   position_margin: 0.05
   position_gain: 5.0
 

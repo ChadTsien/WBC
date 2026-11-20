@@ -116,7 +116,9 @@ def add_actuators_and_sensors(mjcf_text: str) -> str:
     for name in ARM_JOINTS:
         ET.SubElement(actuator, "motor", name=name, joint=name)
     for name in WHEEL_JOINTS:
-        ET.SubElement(actuator, "velocity", name=name, joint=name, kv="100")
+        ET.SubElement(
+            actuator, "velocity", name=name, joint=name, kv="6",
+            forcerange="-6 6", ctrlrange="-44 44")
 
     sensor = root.find("sensor")
     if sensor is None:
